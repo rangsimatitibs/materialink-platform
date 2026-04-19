@@ -44,7 +44,7 @@ const Services = () => {
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-px bg-primary-foreground/10 rounded-2xl overflow-hidden border border-primary-foreground/10">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-px bg-primary-foreground/10 rounded-2xl overflow-hidden border border-primary-foreground/10">
           {services.map((s) => {
             const Icon = s.icon;
             return (
