@@ -23,7 +23,7 @@ import LabRecipesAdmin from "./pages/admin/LabRecipesAdmin";
 import ExternalSourcesAdmin from "./pages/admin/ExternalSourcesAdmin";
 import ExcludedTermsAdmin from "./pages/admin/ExcludedTermsAdmin";
 import WaitlistAdmin from "./pages/admin/WaitlistAdmin";
-import Subscriptions from "./pages/Subscriptions";
+import BookDemo from "./pages/BookDemo";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -41,7 +41,7 @@ const App = () => (
             <Route path="/auth" element={<Auth />} />
             <Route path="/signup" element={<SignUp />} />
             <Route path="/services" element={<ServicesLanding />} />
-            <Route path="/subscriptions" element={<Subscriptions />} />
+            <Route path="/demo" element={<BookDemo />} />
             <Route path="/platform/material-scouting" element={<MaterialScouting />} />
             <Route path="/platform/material/:id" element={<MaterialDetail />} />
             <Route path="/platform/researchers-tool" element={<ResearchersTool />} />
