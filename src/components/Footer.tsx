@@ -32,11 +32,6 @@ const Footer = () => {
                   Researcher's Tool
                 </Link>
               </li>
-              <li>
-                <Link to="/platform/process-optimization" className="text-foreground/80 hover:text-foreground transition-smooth">
-                  Process Optimization
-                </Link>
-              </li>
             </ul>
           </div>
 

@@ -69,20 +69,11 @@ const Header = () => {
                           </Link>
                         </NavigationMenuLink>
                       </li>
-                      <li>
-                        <NavigationMenuLink asChild>
-                          <Link
-                            to="/platform/process-optimization"
-                            className="block select-none space-y-1 rounded-sm p-3 leading-none no-underline outline-none transition-colors hover:bg-muted"
-                          >
-                            <div className="text-sm font-medium leading-none text-foreground">Process Optimization</div>
-                            <p className="line-clamp-2 text-xs leading-snug text-muted-foreground mt-1">
-                              Optimize bioprocessing for efficiency
-                            </p>
-                          </Link>
-                        </NavigationMenuLink>
-                      </li>
                     </ul>
+                  </NavigationMenuContent>
+                </NavigationMenuItem>
+              </NavigationMenuList>
+            </NavigationMenu>
                   </NavigationMenuContent>
                 </NavigationMenuItem>
               </NavigationMenuList>

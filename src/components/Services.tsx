@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ArrowUpRight, Search, FlaskConical, Activity } from "lucide-react";
+import { ArrowUpRight, Search, FlaskConical } from "lucide-react";
 
 const services = [
   {
@@ -17,14 +17,6 @@ const services = [
       "Predict properties, browse lab recipes, and build personal material libraries with cited sources.",
     href: "/platform/researchers-tool",
     icon: FlaskConical,
-  },
-  {
-    number: "03",
-    title: "Process Optimization",
-    description:
-      "Tune bioprocessing parameters and benchmark scenarios to improve yield, time and energy.",
-    href: "/platform/process-optimization",
-    icon: Activity,
   },
 ];
 
@@ -47,7 +39,7 @@ const Services = () => {
             What we build
           </p>
           <h2 className="font-display text-5xl md:text-6xl lg:text-7xl leading-[0.98] text-balance">
-            Three precision tools{" "}
+            Two precision tools{" "}
             <em className="italic text-primary-foreground/80">for serious work.</em>
           </h2>
         </div>
