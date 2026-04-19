@@ -109,7 +109,7 @@ const About = () => {
               </h2>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-8">
+            <div className="grid sm:grid-cols-2 gap-6 max-w-2xl">
               {teamMembers.map((member, index) => (
                 <div
                   key={index}
@@ -117,7 +117,7 @@ const About = () => {
                   onMouseEnter={() => setHoveredCard(index)}
                   onMouseLeave={() => setHoveredCard(null)}
                 >
-                  <div className="relative w-full aspect-[4/5] overflow-hidden">
+                  <div className="relative w-full aspect-square overflow-hidden">
                     {member.image ? (
                       <img
                         src={member.image}
@@ -134,11 +134,11 @@ const About = () => {
 
                     <div className="absolute inset-0 bg-gradient-to-t from-foreground/85 via-foreground/30 to-transparent" />
 
-                    <div className="absolute bottom-0 left-0 right-0 p-6">
-                      <h3 className="font-display text-2xl text-background mb-1 leading-tight">
+                    <div className="absolute bottom-0 left-0 right-0 p-4">
+                      <h3 className="font-display text-lg text-background mb-0.5 leading-tight">
                         {member.name}
                       </h3>
-                      <p className="text-background/80 text-sm font-light">
+                      <p className="text-background/80 text-xs font-light">
                         {member.role}
                       </p>
                     </div>
@@ -149,11 +149,11 @@ const About = () => {
                       hoveredCard === index ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
                     }`}
                   >
-                    <div className="p-6 space-y-4">
-                      <p className="text-sm text-foreground leading-relaxed font-light">
+                    <div className="p-4 space-y-3">
+                      <p className="text-xs text-foreground leading-relaxed font-light">
                         {member.shortBio}
                       </p>
-                      <p className="text-sm text-muted-foreground leading-relaxed font-light">
+                      <p className="text-xs text-muted-foreground leading-relaxed font-light">
                         {member.fullBio}
                       </p>
                       {member.email && (
