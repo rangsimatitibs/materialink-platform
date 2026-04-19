@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/contexts/AuthContext";
 import { LogOut, User } from "lucide-react";
+import logo from "@/assets/logo.png";
 
 const Header = () => {
   const { user, isAdmin, signOut } = useAuth();
@@ -23,7 +24,8 @@ const Header = () => {
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
       <div className="container mx-auto px-6 py-5">
         <nav className="flex items-center justify-between">
-          <Link to="/" className="flex items-baseline gap-2">
+          <Link to="/" className="flex items-center gap-2.5">
+            <img src={logo} alt="MateriaLink logo" className="h-8 w-auto" />
             <span className="font-display text-2xl tracking-tight text-foreground">MateriaLink</span>
             <span className="hidden sm:inline text-[10px] uppercase tracking-[0.2em] text-muted-foreground">meta-database</span>
           </Link>

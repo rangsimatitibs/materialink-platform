@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { Linkedin, Mail } from "lucide-react";
+import logo from "@/assets/logo.png";
 
 const Footer = () => {
   return (
@@ -8,8 +9,9 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-12 gap-12">
           {/* Brand */}
           <div className="md:col-span-5">
-            <Link to="/" className="font-display text-3xl text-foreground tracking-tight">
-              MateriaLink
+            <Link to="/" className="inline-flex items-center gap-3">
+              <img src={logo} alt="MateriaLink logo" className="h-10 w-auto" />
+              <span className="font-display text-3xl text-foreground tracking-tight">MateriaLink</span>
             </Link>
             <p className="text-sm text-muted-foreground mt-3 max-w-xs font-light">
               A meta-database for sustainable materials — built for researchers and industry.
