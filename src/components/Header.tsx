@@ -74,10 +74,6 @@ const Header = () => {
                 </NavigationMenuItem>
               </NavigationMenuList>
             </NavigationMenu>
-                  </NavigationMenuContent>
-                </NavigationMenuItem>
-              </NavigationMenuList>
-            </NavigationMenu>
 
             <Link to="/about" className="text-sm text-foreground/80 hover:text-foreground transition-smooth">
               About
