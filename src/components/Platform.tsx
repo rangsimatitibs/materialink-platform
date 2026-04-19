@@ -1,126 +1,81 @@
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Network, Brain, Globe, Recycle, TrendingUp, Users2 } from "lucide-react";
+const categories = [
+  {
+    id: "01",
+    name: "Bio-based & Renewable",
+    examples: "mycelium · algae · bacterial cellulose · agri-residues",
+  },
+  {
+    id: "02",
+    name: "Recycled & Circular",
+    examples: "post-consumer · post-industrial · upcycled composites",
+  },
+  {
+    id: "03",
+    name: "Engineered Sustainable",
+    examples: "bioplastics · geopolymers · green concrete · low-C alloys",
+  },
+  {
+    id: "04",
+    name: "Hybrid & Composite",
+    examples: "bio-composites · natural-fibre reinforced · mineral-bio",
+  },
+];
+
+const facets = [
+  { label: "Identity", note: "name · synonyms · TRL" },
+  { label: "Properties", note: "mechanical · thermal · chemical" },
+  { label: "Sourcing", note: "suppliers · MOQ · certifications" },
+  { label: "Sustainability", note: "LCA · CO₂e · end-of-life" },
+  { label: "Provenance", note: "citations · lab recipes · contributors" },
+];
 
 const Platform = () => {
-  const benefits = [
-    {
-      icon: Network,
-      title: "Connected Ecosystem",
-      description: "Join a thriving network of material producers, innovators, and businesses across Europe and the UK."
-    },
-    {
-      icon: Brain,
-      title: "AI-Driven Insights",
-      description: "Leverage advanced algorithms for personalized material recommendations and optimization strategies."
-    },
-    {
-      icon: Globe,
-      title: "Sustainable Focus",
-      description: "Access recycled, bio-based, and innovative materials that reduce environmental impact."
-    },
-    {
-      icon: Recycle,
-      title: "Circular Economy",
-      description: "Support circular economy principles by connecting waste streams with material needs."
-    },
-    {
-      icon: TrendingUp,
-      title: "Performance Guaranteed",
-      description: "Maintain or enhance product performance while transitioning to sustainable alternatives."
-    },
-    {
-      icon: Users2,
-      title: "Collaborative Innovation",
-      description: "Connect with startups, SMEs, and established companies driving material innovation."
-    }
-  ];
-
   return (
-    <section id="platform" className="py-32 bg-muted/20">
+    <section className="bg-background py-28 border-t border-border">
       <div className="container mx-auto px-6">
-        <div className="grid lg:grid-cols-2 gap-20 items-center">
-          <div className="space-y-10">
-            <div className="space-y-8">
-              <div className="inline-flex items-center gap-2 bg-accent/10 text-accent px-5 py-2.5 rounded-full text-sm font-semibold">
-                <Brain className="w-4 h-4" />
-                Material Informatics Platform
-              </div>
-              
-              <h2 className="text-5xl lg:text-6xl font-bold text-foreground leading-[1.1]">
-                Empowering{" "}
-                <span className="bg-gradient-innovation bg-clip-text text-transparent">
-                  Smart Materials
-                </span>{" "}
-                Innovation
-              </h2>
-              
-              <p className="text-xl text-muted-foreground leading-relaxed">
-                MateriaLink's material AI platform bridges the gap between smart materials innovation and practical implementation through advanced material informatics, 
-                supporting Europe and UK's emerging startups and middle-sized companies.
-              </p>
-            </div>
-            
-            <div className="space-y-6">
-              <div className="flex items-start gap-5">
-                <div className="w-12 h-12 bg-gradient-sustainable rounded-xl flex items-center justify-center flex-shrink-0 shadow-md">
-                  <div className="w-3 h-3 bg-white rounded-full"></div>
-                </div>
-                <div>
-                  <h3 className="text-lg font-bold text-foreground mb-2">Eco-Friendly Alternatives</h3>
-                  <p className="text-muted-foreground leading-relaxed">Discover materials that reduce environmental impact without compromising on performance or efficiency.</p>
-                </div>
-              </div>
-              
-              <div className="flex items-start gap-5">
-                <div className="w-12 h-12 bg-gradient-primary rounded-xl flex items-center justify-center flex-shrink-0 shadow-md">
-                  <div className="w-3 h-3 bg-white rounded-full"></div>
-                </div>
-                <div>
-                  <h3 className="text-lg font-bold text-foreground mb-2">Innovation Network</h3>
-                  <p className="text-muted-foreground leading-relaxed">Connect with pioneers in sustainable materials and cutting-edge bioprocessing technologies.</p>
-                </div>
-              </div>
-              
-              <div className="flex items-start gap-5">
-                <div className="w-12 h-12 bg-gradient-accent rounded-xl flex items-center justify-center flex-shrink-0 shadow-md">
-                  <div className="w-3 h-3 bg-white rounded-full"></div>
-                </div>
-                <div>
-                  <h3 className="text-lg font-bold text-foreground mb-2">Educational Resources</h3>
-                  <p className="text-muted-foreground leading-relaxed">Access comprehensive educational materials and best practices for sustainable material integration.</p>
-                </div>
-              </div>
-            </div>
-            
-            <a href="/signup" className="mt-8 block">
-              <Button size="lg" className="bg-gradient-innovation text-white hover:shadow-xl hover:scale-105 transition-all duration-300 px-8 py-6 text-lg font-semibold group">
-                Join the Platform
-                <Network className="w-5 h-5 group-hover:scale-110 transition-transform" />
-              </Button>
-            </a>
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20">
+          <div className="lg:col-span-5">
+            <p className="text-xs uppercase tracking-[0.25em] text-muted-foreground mb-6">
+              Inside the meta-database
+            </p>
+            <h2 className="font-display text-4xl md:text-5xl text-foreground leading-[1.05] mb-6">
+              Four categories.<br />
+              <em className="italic text-primary">One coherent model.</em>
+            </h2>
+            <p className="text-base text-muted-foreground leading-relaxed font-light max-w-md">
+              Every material is described through the same five facets, so research
+              insights and industrial sourcing draw from a single source of truth.
+            </p>
           </div>
-          
-          <div className="grid grid-cols-2 gap-6">
-            {benefits.map((benefit, index) => (
-              <Card key={index} className="group hover:shadow-xl transition-all duration-500 border-2 border-transparent hover:border-primary/20 bg-card hover:-translate-y-1">
-                <CardContent className="p-8">
-                  <div className="space-y-5">
-                    <div className="w-14 h-14 bg-gradient-sustainable rounded-2xl flex items-center justify-center group-hover:scale-110 group-hover:shadow-glow transition-all duration-500">
-                      <benefit.icon className="w-7 h-7 text-white" />
-                    </div>
-                    <div>
-                      <h3 className="text-lg font-bold text-card-foreground mb-3 group-hover:text-primary transition-colors">
-                        {benefit.title}
-                      </h3>
-                      <p className="text-sm text-muted-foreground leading-relaxed">
-                        {benefit.description}
-                      </p>
-                    </div>
+
+          <div className="lg:col-span-7 space-y-12">
+            <div className="divide-y divide-border border-t border-border">
+              {categories.map((c) => (
+                <div key={c.id} className="grid grid-cols-12 gap-4 py-6 items-baseline">
+                  <div className="col-span-2 text-sm tabular-nums text-muted-foreground">{c.id}</div>
+                  <div className="col-span-10 md:col-span-5 font-display text-2xl text-foreground">
+                    {c.name}
                   </div>
-                </CardContent>
-              </Card>
-            ))}
+                  <div className="col-span-12 md:col-span-5 text-sm text-muted-foreground font-light">
+                    {c.examples}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div>
+              <p className="text-xs uppercase tracking-[0.25em] text-muted-foreground mb-4">
+                Shared facets
+              </p>
+              <div className="flex flex-wrap gap-x-6 gap-y-3">
+                {facets.map((f) => (
+                  <div key={f.label} className="text-sm">
+                    <span className="text-foreground">{f.label}</span>
+                    <span className="text-muted-foreground"> — {f.note}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </div>
