@@ -177,7 +177,7 @@ const SignUp = () => {
                     <SelectContent>
                       <SelectItem value="material-scouting">Material Scouting</SelectItem>
                       <SelectItem value="researchers-tool">Researcher's Tool</SelectItem>
-                      <SelectItem value="bioprocess-optimization">Process Optimization</SelectItem>
+                      
                       <SelectItem value="all-services">All of the above</SelectItem>
                     </SelectContent>
                   </Select>

@@ -13,7 +13,7 @@ import ServicesLanding from "./pages/ServicesLanding";
 import MaterialScouting from "./pages/platform/MaterialScouting";
 import MaterialDetail from "./pages/platform/MaterialDetail";
 import ResearchersTool from "./pages/platform/ResearchersTool";
-import ProcessOptimization from "./pages/platform/ProcessOptimization";
+
 import AdminLayout from "./pages/admin/AdminLayout";
 import Dashboard from "./pages/admin/Dashboard";
 import MaterialsAdmin from "./pages/admin/MaterialsAdmin";
@@ -45,7 +45,7 @@ const App = () => (
             <Route path="/platform/material-scouting" element={<MaterialScouting />} />
             <Route path="/platform/material/:id" element={<MaterialDetail />} />
             <Route path="/platform/researchers-tool" element={<ResearchersTool />} />
-            <Route path="/platform/process-optimization" element={<ProcessOptimization />} />
+            
             <Route path="/admin" element={<ProtectedRoute requireAdmin><AdminLayout /></ProtectedRoute>}>
               <Route index element={<Dashboard />} />
               <Route path="materials" element={<MaterialsAdmin />} />
