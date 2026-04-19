@@ -1,72 +1,93 @@
-import { Linkedin, Mail, MapPin } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import logo from "@/assets/materialink-logo.png";
+import { Link } from "react-router-dom";
+import { Linkedin, Mail } from "lucide-react";
 
 const Footer = () => {
   return (
-    <footer id="contact" className="bg-muted/30 border-t border-border">
-      <div className="container mx-auto px-6 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
-          {/* Logo & Brand */}
-          <div className="flex flex-col items-start gap-3">
-            <div className="flex items-center gap-3">
-              <img 
-                src={logo} 
-                alt="MateriaLink Logo" 
-                className="w-10 h-10 object-contain"
-              />
-              <div>
-                <h2 className="text-lg font-bold text-foreground">MateriaLink</h2>
-                <p className="text-xs text-muted-foreground">AI-Powered Sustainability</p>
-              </div>
-            </div>
+    <footer id="contact" className="bg-background border-t border-border">
+      <div className="container mx-auto px-6 py-16">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-12">
+          {/* Brand */}
+          <div className="md:col-span-5">
+            <Link to="/" className="font-display text-3xl text-foreground tracking-tight">
+              MateriaLink
+            </Link>
+            <p className="text-sm text-muted-foreground mt-3 max-w-xs font-light">
+              A meta-database for sustainable materials — built for researchers and industry.
+            </p>
           </div>
 
-          {/* Locations */}
-          <div className="flex flex-col gap-4">
-            <h3 className="text-sm font-semibold text-foreground">Locations</h3>
-            <div className="flex flex-col gap-2">
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <MapPin className="w-4 h-4 text-primary" />
-                <span>Paris, France</span>
-              </div>
-              <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <MapPin className="w-4 h-4 text-primary" />
-                <span>London, UK</span>
-              </div>
-            </div>
+          {/* Platform */}
+          <div className="md:col-span-3">
+            <h3 className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-4">Platform</h3>
+            <ul className="space-y-2 text-sm">
+              <li>
+                <Link to="/platform/material-scouting" className="text-foreground/80 hover:text-foreground transition-smooth">
+                  Material Scouting
+                </Link>
+              </li>
+              <li>
+                <Link to="/platform/researchers-tool" className="text-foreground/80 hover:text-foreground transition-smooth">
+                  Researcher's Tool
+                </Link>
+              </li>
+              <li>
+                <Link to="/platform/process-optimization" className="text-foreground/80 hover:text-foreground transition-smooth">
+                  Process Optimization
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Company */}
+          <div className="md:col-span-2">
+            <h3 className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-4">Company</h3>
+            <ul className="space-y-2 text-sm">
+              <li>
+                <Link to="/about" className="text-foreground/80 hover:text-foreground transition-smooth">
+                  About
+                </Link>
+              </li>
+              <li>
+                <Link to="/demo" className="text-foreground/80 hover:text-foreground transition-smooth">
+                  Book a demo
+                </Link>
+              </li>
+            </ul>
           </div>
 
           {/* Contact */}
-          <div className="flex flex-col gap-4">
-            <h3 className="text-sm font-semibold text-foreground">Contact</h3>
-            <div className="flex flex-col gap-3">
-              <a 
-                href="mailto:Rangsimatiti.b.s@gmail.com" 
-                className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-smooth"
-              >
-                <Mail className="w-4 h-4" />
-                <span>Rangsimatiti.b.s@gmail.com</span>
-              </a>
-              <a
-                href="https://www.linkedin.com/company/materia-link/?viewAsMember=true"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Button variant="outline" size="sm" className="gap-2">
+          <div className="md:col-span-2">
+            <h3 className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-4">Contact</h3>
+            <ul className="space-y-3 text-sm">
+              <li>
+                <a
+                  href="mailto:Rangsimatiti.b.s@gmail.com"
+                  className="inline-flex items-center gap-2 text-foreground/80 hover:text-foreground transition-smooth"
+                >
+                  <Mail className="w-4 h-4" />
+                  Email
+                </a>
+              </li>
+              <li>
+                <a
+                  href="https://www.linkedin.com/company/materia-link/?viewAsMember=true"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 text-foreground/80 hover:text-foreground transition-smooth"
+                >
                   <Linkedin className="w-4 h-4" />
-                  Follow on LinkedIn
-                </Button>
-              </a>
-            </div>
+                  LinkedIn
+                </a>
+              </li>
+            </ul>
           </div>
         </div>
 
-        {/* Copyright */}
-        <div className="mt-8 pt-8 border-t border-border">
-          <p className="text-center text-sm text-muted-foreground">
+        <div className="mt-16 pt-8 border-t border-border flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
+          <p className="text-xs text-muted-foreground">
             © {new Date().getFullYear()} MateriaLink. All rights reserved.
           </p>
+          <p className="text-xs text-muted-foreground">Paris · London</p>
         </div>
       </div>
     </footer>

@@ -4,27 +4,28 @@ import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 
-const signupSchema = z.object({
-  email: z.string().trim().email({ message: "Invalid email address" }).max(255),
-  fullName: z.string().trim().min(2, { message: "Name must be at least 2 characters" }).max(100),
+const demoSchema = z.object({
+  fullName: z.string().trim().min(2, "Name must be at least 2 characters").max(100),
+  email: z.string().trim().email("Invalid email address").max(255),
   companyName: z.string().trim().max(100).optional(),
-  phone: z.string().trim().max(20).optional(),
-  interestArea: z.string().min(1, { message: "Please select an interest area" }),
+  role: z.enum(["researcher", "industry"], { required_error: "Please select a role" }),
+  message: z.string().trim().max(1000).optional(),
 });
 
-const SignUp = () => {
+const BookDemo = () => {
   const [formData, setFormData] = useState({
-    email: "",
     fullName: "",
+    email: "",
     companyName: "",
-    phone: "",
-    interestArea: "",
+    role: "" as "researcher" | "industry" | "",
+    message: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
@@ -32,36 +33,39 @@ const SignUp = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     try {
-      signupSchema.parse(formData);
+      demoSchema.parse(formData);
       setIsSubmitting(true);
+
+      const interest = `Demo request (${formData.role})${
+        formData.message ? ` — ${formData.message}` : ""
+      }`;
 
       const { error } = await supabase.from("waitlist_signups").insert([
         {
           email: formData.email,
           full_name: formData.fullName,
           company_name: formData.companyName || null,
-          phone: formData.phone || null,
-          interest_area: formData.interestArea,
+          interest_area: interest,
         },
       ]);
 
       if (error) {
         if (error.code === "23505") {
           toast({
-            title: "Already registered",
-            description: "This email is already on our list.",
-            variant: "destructive",
+            title: "Already on the list",
+            description: "We've already received a request from this email.",
           });
         } else {
           throw error;
         }
       } else {
         toast({
-          title: "Thanks",
-          description: "You've been added to the list. We'll be in touch.",
+          title: "Request received",
+          description: "Thanks — we'll be in touch shortly.",
         });
-        setFormData({ email: "", fullName: "", companyName: "", phone: "", interestArea: "" });
+        setFormData({ fullName: "", email: "", companyName: "", role: "", message: "" });
         setTimeout(() => navigate("/"), 1800);
       }
     } catch (error) {
@@ -89,19 +93,22 @@ const SignUp = () => {
       <main className="pt-32 pb-24">
         <div className="container mx-auto px-6">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
+            {/* Intro */}
             <div className="lg:col-span-5">
               <p className="text-xs uppercase tracking-[0.25em] text-muted-foreground mb-6">
-                Request access
+                Book a demo
               </p>
               <h1 className="font-display text-5xl md:text-6xl text-foreground leading-[1.05] mb-6">
-                Join the<br />
-                <em className="italic text-primary">early circle.</em>
+                Let's walk through<br />
+                <em className="italic text-primary">the database together.</em>
               </h1>
               <p className="text-base text-muted-foreground leading-relaxed font-light max-w-md">
-                Tell us a little about yourself and we'll let you know when access opens.
+                Tell us a little about your work and we'll set up a 30-minute call
+                tailored to your needs — research, sourcing, or both.
               </p>
             </div>
 
+            {/* Form */}
             <div className="lg:col-span-7">
               <form onSubmit={handleSubmit} className="space-y-8 max-w-xl">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -134,53 +141,49 @@ const SignUp = () => {
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="companyName" className="text-xs uppercase tracking-wider text-muted-foreground">
-                      Company / Institution
-                    </Label>
-                    <Input
-                      id="companyName"
-                      value={formData.companyName}
-                      onChange={(e) => setFormData({ ...formData, companyName: e.target.value })}
-                      maxLength={100}
-                      className="border-0 border-b border-border rounded-none px-0 focus-visible:ring-0 focus-visible:border-foreground bg-transparent"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="phone" className="text-xs uppercase tracking-wider text-muted-foreground">
-                      Phone
-                    </Label>
-                    <Input
-                      id="phone"
-                      type="tel"
-                      value={formData.phone}
-                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                      maxLength={20}
-                      className="border-0 border-b border-border rounded-none px-0 focus-visible:ring-0 focus-visible:border-foreground bg-transparent"
-                    />
-                  </div>
+                <div className="space-y-2">
+                  <Label htmlFor="companyName" className="text-xs uppercase tracking-wider text-muted-foreground">
+                    Company / Institution
+                  </Label>
+                  <Input
+                    id="companyName"
+                    value={formData.companyName}
+                    onChange={(e) => setFormData({ ...formData, companyName: e.target.value })}
+                    maxLength={100}
+                    className="border-0 border-b border-border rounded-none px-0 focus-visible:ring-0 focus-visible:border-foreground bg-transparent"
+                  />
+                </div>
+
+                <div className="space-y-3">
+                  <Label className="text-xs uppercase tracking-wider text-muted-foreground">I am a…</Label>
+                  <RadioGroup
+                    value={formData.role}
+                    onValueChange={(v) => setFormData({ ...formData, role: v as "researcher" | "industry" })}
+                    className="flex gap-8"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="researcher" id="role-researcher" />
+                      <Label htmlFor="role-researcher" className="font-normal cursor-pointer">Researcher</Label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="industry" id="role-industry" />
+                      <Label htmlFor="role-industry" className="font-normal cursor-pointer">Industry</Label>
+                    </div>
+                  </RadioGroup>
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="interestArea" className="text-xs uppercase tracking-wider text-muted-foreground">
-                    Primary interest
+                  <Label htmlFor="message" className="text-xs uppercase tracking-wider text-muted-foreground">
+                    What would you like to explore? (optional)
                   </Label>
-                  <Select
-                    value={formData.interestArea}
-                    onValueChange={(value) => setFormData({ ...formData, interestArea: value })}
-                    required
-                  >
-                    <SelectTrigger id="interestArea" className="border-0 border-b border-border rounded-none px-0 focus:ring-0 bg-transparent">
-                      <SelectValue placeholder="Select an interest" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="material-scouting">Material Scouting</SelectItem>
-                      <SelectItem value="researchers-tool">Researcher's Tool</SelectItem>
-                      <SelectItem value="bioprocess-optimization">Process Optimization</SelectItem>
-                      <SelectItem value="all-services">All of the above</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <Textarea
+                    id="message"
+                    value={formData.message}
+                    onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                    maxLength={1000}
+                    rows={4}
+                    className="border border-border rounded-sm focus-visible:ring-0 focus-visible:border-foreground bg-transparent resize-none"
+                  />
                 </div>
 
                 <Button
@@ -189,7 +192,7 @@ const SignUp = () => {
                   disabled={isSubmitting}
                   className="rounded-full px-8 h-12 bg-foreground text-background hover:bg-foreground/90"
                 >
-                  {isSubmitting ? "Sending…" : "Request access"}
+                  {isSubmitting ? "Sending…" : "Request a demo"}
                 </Button>
               </form>
             </div>
@@ -201,4 +204,4 @@ const SignUp = () => {
   );
 };
 
-export default SignUp;
+export default BookDemo;

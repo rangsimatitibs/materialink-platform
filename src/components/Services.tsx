@@ -1,94 +1,63 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Search, CheckCircle, Zap, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
+import { ArrowUpRight } from "lucide-react";
+
+const services = [
+  {
+    number: "01",
+    title: "Material Scouting",
+    description:
+      "Search a curated catalogue of sustainable materials with rich properties, suppliers and provenance.",
+    href: "/platform/material-scouting",
+  },
+  {
+    number: "02",
+    title: "Researcher's Tool",
+    description:
+      "Predict properties, browse lab recipes, and build personal material libraries with cited sources.",
+    href: "/platform/researchers-tool",
+  },
+  {
+    number: "03",
+    title: "Process Optimization",
+    description:
+      "Tune bioprocessing parameters and benchmark scenarios to improve yield, time and energy.",
+    href: "/platform/process-optimization",
+  },
+];
 
 const Services = () => {
-  const services = [
-    {
-      id: "material-scouting",
-      icon: Search,
-      title: "Material Scouting",
-      description: "AI-powered algorithms to discover and identify sustainable materials tailored to your specific requirements and applications.",
-      features: ["Advanced AI matching", "Global material database", "Performance analytics"],
-      gradient: "bg-gradient-primary"
-    },
-    {
-      id: "researchers-tool",
-      icon: CheckCircle,
-      title: "Researcher's Tool",
-      description: "Comprehensive R&D platform with AI-powered property prediction, lab recipes database, and curated material library.",
-      features: ["Property prediction", "Lab recipes database", "Material library"],
-      gradient: "bg-gradient-sustainable"
-    },
-    {
-      id: "bioprocess-optimization",
-      icon: Zap,
-      title: "Bioprocess Optimization",
-      description: "Advanced bioprocessing techniques and optimization strategies to enhance the production of sustainable materials.",
-      features: ["Process optimization", "Efficiency improvements", "Cost reduction"],
-      gradient: "bg-gradient-innovation"
-    }
-  ];
-
   return (
-    <section id="services" className="py-32 bg-background">
+    <section className="bg-background py-28">
       <div className="container mx-auto px-6">
-        <div className="text-center mb-20">
-          <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-5 py-2.5 rounded-full text-sm font-semibold mb-8">
-            <Zap className="w-4 h-4" />
-            Material AI Platform Services
-          </div>
-          <h2 className="text-5xl lg:text-6xl font-bold text-foreground mb-6 leading-tight">
-            Smart Materials Discovery & <br className="hidden sm:block" />
-            <span className="bg-gradient-sustainable bg-clip-text text-transparent">Material Informatics</span>
+        <div className="max-w-4xl mb-20">
+          <p className="text-xs uppercase tracking-[0.25em] text-muted-foreground mb-6">What we do</p>
+          <h2 className="font-display text-4xl md:text-5xl lg:text-6xl text-foreground leading-[1.05]">
+            Three quiet tools<br />
+            <em className="italic text-primary">for serious work.</em>
           </h2>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
-            Discover, validate, and integrate smart materials seamlessly with our AI-powered material informatics platform.
-          </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {services.map((service, index) => (
-            <Card key={index} className="group hover:shadow-xl transition-all duration-500 border-2 border-transparent hover:border-primary/20 bg-card hover:-translate-y-1">
-              <CardHeader className="pb-6">
-                <div className={`w-16 h-16 ${service.gradient} rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 group-hover:shadow-glow transition-all duration-500`}>
-                  <service.icon className="w-8 h-8 text-white" />
-                </div>
-                <CardTitle className="text-xl font-bold text-card-foreground group-hover:text-primary transition-colors mb-3">
-                  {service.title}
-                </CardTitle>
-                <CardDescription className="text-muted-foreground leading-relaxed text-base">
-                  {service.description}
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="pt-0">
-                <ul className="space-y-3 mb-8">
-                  {service.features.map((feature, featureIndex) => (
-                    <li key={featureIndex} className="flex items-center gap-3 text-sm text-muted-foreground">
-                      <CheckCircle className="w-5 h-5 text-accent flex-shrink-0" />
-                      {feature}
-                    </li>
-                  ))}
-                </ul>
-                <Link to={`/services#${service.id}`}>
-                  <Button variant="ghost" className="w-full group/btn font-semibold">
-                    Learn More
-                    <ArrowRight className="w-4 h-4 group-hover/btn:translate-x-1 transition-transform" />
-                  </Button>
-                </Link>
-              </CardContent>
-            </Card>
+        <div className="divide-y divide-border border-t border-border">
+          {services.map((s) => (
+            <Link
+              key={s.number}
+              to={s.href}
+              className="group grid grid-cols-12 gap-6 py-10 items-start hover:bg-muted/40 transition-smooth -mx-6 px-6"
+            >
+              <div className="col-span-2 md:col-span-1 text-sm text-muted-foreground tabular-nums pt-2">
+                {s.number}
+              </div>
+              <div className="col-span-10 md:col-span-5">
+                <h3 className="font-display text-3xl md:text-4xl text-foreground">{s.title}</h3>
+              </div>
+              <div className="col-span-12 md:col-span-5 text-base text-muted-foreground leading-relaxed font-light">
+                {s.description}
+              </div>
+              <div className="hidden md:flex col-span-1 justify-end pt-2 text-foreground/60 group-hover:text-foreground transition-smooth">
+                <ArrowUpRight className="w-5 h-5" />
+              </div>
+            </Link>
           ))}
-        </div>
-
-        <div className="text-center mt-20">
-          <Link to="/services">
-            <Button size="lg" className="bg-gradient-sustainable text-white hover:shadow-xl hover:scale-105 transition-all duration-300 px-8 py-6 text-lg font-semibold group">
-              Explore All Services
-              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-            </Button>
-          </Link>
         </div>
       </div>
     </section>

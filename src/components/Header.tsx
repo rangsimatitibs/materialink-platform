@@ -16,49 +16,40 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/contexts/AuthContext";
 import { LogOut, User } from "lucide-react";
-import logo from "@/assets/materialink-logo.png";
-import { SubscriptionBadge } from "@/components/SubscriptionBadge";
 
 const Header = () => {
   const { user, isAdmin, signOut } = useAuth();
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-lg border-b border-border">
-      <div className="container mx-auto px-6 py-4">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
+      <div className="container mx-auto px-6 py-5">
         <nav className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <img 
-              src={logo} 
-              alt="MateriaLink Logo" 
-              className="w-10 h-10 object-contain"
-            />
-            <div>
-              <h1 className="text-xl font-bold text-foreground">MateriaLink</h1>
-              <p className="text-xs text-muted-foreground">AI-Powered Sustainability</p>
-            </div>
-          </div>
-          
-          <div className="hidden md:flex items-center gap-6">
-            <Link to="/" className="text-sm font-medium text-foreground hover:text-primary transition-smooth">
+          <Link to="/" className="flex items-baseline gap-2">
+            <span className="font-display text-2xl tracking-tight text-foreground">MateriaLink</span>
+            <span className="hidden sm:inline text-[10px] uppercase tracking-[0.2em] text-muted-foreground">meta-database</span>
+          </Link>
+
+          <div className="hidden md:flex items-center gap-8">
+            <Link to="/" className="text-sm text-foreground/80 hover:text-foreground transition-smooth">
               Home
             </Link>
-            
+
             <NavigationMenu>
               <NavigationMenuList>
                 <NavigationMenuItem>
-                  <NavigationMenuTrigger className="text-sm font-medium bg-transparent hover:bg-transparent data-[state=open]:bg-transparent">
+                  <NavigationMenuTrigger className="text-sm font-normal bg-transparent hover:bg-transparent data-[state=open]:bg-transparent px-0 text-foreground/80 hover:text-foreground">
                     Platform
                   </NavigationMenuTrigger>
                   <NavigationMenuContent className="bg-popover">
-                    <ul className="grid w-[400px] gap-3 p-4">
+                    <ul className="grid w-[380px] gap-1 p-3">
                       <li>
                         <NavigationMenuLink asChild>
                           <Link
                             to="/platform/material-scouting"
-                            className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                            className="block select-none space-y-1 rounded-sm p-3 leading-none no-underline outline-none transition-colors hover:bg-muted"
                           >
-                            <div className="text-sm font-medium leading-none">Material Scouting</div>
-                            <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                              Discover sustainable materials with AI-powered search
+                            <div className="text-sm font-medium leading-none text-foreground">Material Scouting</div>
+                            <p className="line-clamp-2 text-xs leading-snug text-muted-foreground mt-1">
+                              Discover sustainable materials with AI-assisted search
                             </p>
                           </Link>
                         </NavigationMenuLink>
@@ -67,11 +58,11 @@ const Header = () => {
                         <NavigationMenuLink asChild>
                           <Link
                             to="/platform/researchers-tool"
-                            className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                            className="block select-none space-y-1 rounded-sm p-3 leading-none no-underline outline-none transition-colors hover:bg-muted"
                           >
-                            <div className="text-sm font-medium leading-none">Researcher's Tool</div>
-                            <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                              Research tools for property prediction, lab recipes & material library
+                            <div className="text-sm font-medium leading-none text-foreground">Researcher's Tool</div>
+                            <p className="line-clamp-2 text-xs leading-snug text-muted-foreground mt-1">
+                              Property prediction, lab recipes & material library
                             </p>
                           </Link>
                         </NavigationMenuLink>
@@ -80,11 +71,11 @@ const Header = () => {
                         <NavigationMenuLink asChild>
                           <Link
                             to="/platform/process-optimization"
-                            className="block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground"
+                            className="block select-none space-y-1 rounded-sm p-3 leading-none no-underline outline-none transition-colors hover:bg-muted"
                           >
-                            <div className="text-sm font-medium leading-none">Process Optimization</div>
-                            <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-                              Optimize bioprocessing for maximum efficiency
+                            <div className="text-sm font-medium leading-none text-foreground">Process Optimization</div>
+                            <p className="line-clamp-2 text-xs leading-snug text-muted-foreground mt-1">
+                              Optimize bioprocessing for efficiency
                             </p>
                           </Link>
                         </NavigationMenuLink>
@@ -95,22 +86,18 @@ const Header = () => {
               </NavigationMenuList>
             </NavigationMenu>
 
-            <Link to="/subscriptions" className="text-sm font-medium text-foreground hover:text-primary transition-smooth">
-              Subscriptions
-            </Link>
-            <Link to="/about" className="text-sm font-medium text-foreground hover:text-primary transition-smooth">
+            <Link to="/about" className="text-sm text-foreground/80 hover:text-foreground transition-smooth">
               About
             </Link>
           </div>
-          
+
           <div className="flex items-center gap-3">
             {user ? (
               <>
-                <SubscriptionBadge size="sm" />
                 {isAdmin && (
                   <Link to="/admin">
                     <Button variant="outline" size="sm">
-                      Admin Panel
+                      Admin
                     </Button>
                   </Link>
                 )}
@@ -118,7 +105,7 @@ const Header = () => {
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" size="sm">
                       <User className="h-4 w-4 mr-2" />
-                      {user.email}
+                      <span className="hidden sm:inline">{user.email}</span>
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
@@ -130,19 +117,15 @@ const Header = () => {
                 </DropdownMenu>
               </>
             ) : (
-              <>
-                <Link to="/auth">
-                  <Button variant="ghost" size="sm">
-                    Login
-                  </Button>
-                </Link>
-                <Link to="/signup">
-                  <Button variant="hero" size="sm">
-                    Get Started
-                  </Button>
-                </Link>
-              </>
+              <Link to="/auth" className="text-sm text-foreground/80 hover:text-foreground transition-smooth hidden sm:inline">
+                Login
+              </Link>
             )}
+            <Link to="/demo">
+              <Button size="sm" className="rounded-full px-5 bg-foreground text-background hover:bg-foreground/90">
+                Book a demo
+              </Button>
+            </Link>
           </div>
         </nav>
       </div>
