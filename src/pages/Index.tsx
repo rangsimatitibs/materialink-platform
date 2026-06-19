@@ -1,8 +1,9 @@
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
+import WhyMaterialink from "@/components/WhyMaterialink";
 import WorkflowComparison from "@/components/WorkflowComparison";
-import Platform from "@/components/Platform";
-import Services from "@/components/Services";
+import SupplierMoat from "@/components/SupplierMoat";
+import FutureVision from "@/components/FutureVision";
 import Footer from "@/components/Footer";
 
 const Index = () => {
@@ -18,7 +19,7 @@ const Index = () => {
             name: "MateriaLink",
             url: "https://materialink.ai",
             description:
-              "Material Sustainability Intelligence — discover materials, compare suppliers, assess environmental impacts and feed decisions into LCA/EPD workflows.",
+              "Choose materials with confidence. The link between material selection and sustainability assessment — discover materials, compare suppliers, assess environmental impacts and feed decisions into LCA/EPD workflows.",
             potentialAction: {
               "@type": "SearchAction",
               target: "https://materialink.ai/platform/material-scouting?q={search_term_string}",
@@ -29,11 +30,12 @@ const Index = () => {
       />
       <Header />
       <main>
-        <h1 className="sr-only">MateriaLink — sustainable materials meta-database for researchers and industry</h1>
+        <h1 className="sr-only">MateriaLink — choose materials with confidence. Link between material selection and sustainability assessment.</h1>
         <Hero />
+        <WhyMaterialink />
         <WorkflowComparison />
-        <Platform />
-        <Services />
+        <SupplierMoat />
+        <FutureVision />
       </main>
       <Footer />
     </div>

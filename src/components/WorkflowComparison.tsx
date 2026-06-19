@@ -31,13 +31,11 @@ const WorkflowComparison = () => {
       <div className="container mx-auto px-6">
         <div className="max-w-2xl mb-16">
           <p className="text-xs uppercase tracking-[0.25em] text-muted-foreground mb-6">
-            Why MateriaLink
+            This is where the magic happens
           </p>
           <h2 className="font-display text-4xl md:text-5xl lg:text-6xl leading-[1.02] text-balance text-foreground">
-            Skip the hand-offs.{" "}
-            <em className="italic text-primary font-normal">
-              Decide with impact data from the start.
-            </em>
+            Material selection meets{" "}
+            <em className="italic text-primary font-normal">environmental intelligence.</em>
           </h2>
           <p className="mt-6 text-lg text-muted-foreground font-light max-w-xl">
             Traditional material selection treats sustainability as a downstream
@@ -124,6 +122,10 @@ const WorkflowComparison = () => {
             </div>
           </div>
         </div>
+
+        <p className="font-display italic text-xl md:text-2xl text-foreground/80 text-center mt-16 max-w-2xl mx-auto leading-relaxed">
+          "Every material choice becomes an environmental decision. MateriaLink helps you understand both simultaneously."
+        </p>
       </div>
     </section>
   );
