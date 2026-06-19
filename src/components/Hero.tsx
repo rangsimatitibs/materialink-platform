@@ -19,19 +19,19 @@ const Hero = () => {
           <div className="lg:col-span-7 animate-fade-up">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 mb-8 rounded-full glass text-xs uppercase tracking-[0.2em] text-foreground/70">
               <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
-              The sustainable materials meta-database
+              Material Sustainability Intelligence
             </div>
 
             <h1 className="font-display text-[clamp(2.75rem,7vw,6.5rem)] leading-[0.95] text-foreground text-balance mb-8">
-              The materials of{" "}
-              <em className="italic font-normal text-primary">tomorrow,</em>{" "}
-              indexed today.
+              The environmental intelligence layer between{" "}
+              <em className="italic font-normal text-primary">material selection</em>{" "}
+              and sustainability assessment.
             </h1>
 
             <p className="text-lg md:text-xl text-muted-foreground max-w-xl leading-relaxed font-light mb-10 text-pretty">
-              MateriaLink unifies bio-based, recycled, engineered and hybrid materials
-              into one structured catalogue — properties, suppliers and provenance,
-              all in one place.
+              Discover materials, compare suppliers, assess environmental impacts,
+              simulate alternatives and generate decision reports that feed directly
+              into your LCA and EPD workflows.
             </p>
 
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-5">
@@ -70,18 +70,18 @@ const Hero = () => {
 
             {/* Floating data card */}
             <div className="absolute -bottom-6 -left-6 lg:-left-10 glass rounded-xl px-5 py-4 shadow-large max-w-[220px] animate-float-slow" style={{ animationDelay: "1s" }}>
-              <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground mb-1">Sample · Bio-based</p>
+              <p className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground mb-1">Impact snapshot</p>
               <p className="font-display text-lg text-foreground leading-tight">Mycelium composite</p>
               <div className="flex gap-3 mt-2 text-xs text-muted-foreground">
-                <span>TRL 7</span>
-                <span>·</span>
                 <span>CO₂e ↓ 68%</span>
+                <span>·</span>
+                <span>EPD ✓</span>
               </div>
             </div>
 
             {/* Top floating tag */}
             <div className="hidden md:block absolute -top-4 -right-4 glass rounded-full px-4 py-2 shadow-medium text-xs text-foreground/80">
-              <span className="text-accent">●</span> 4 categories · 5 facets
+              <span className="text-accent">●</span> Material → Impact → Decision
             </div>
           </div>
         </div>
