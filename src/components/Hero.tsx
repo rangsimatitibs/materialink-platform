@@ -335,8 +335,8 @@ const Hero = () => {
                 <TabsList className="grid grid-cols-4 w-full">
                   <TabsTrigger value="physical">Physical</TabsTrigger>
                   <TabsTrigger value="supplier">Supplier</TabsTrigger>
-                  <TabsTrigger value="sustainability">Sustain.</TabsTrigger>
-                  <TabsTrigger value="certs">Certs</TabsTrigger>
+                  <TabsTrigger value="sustainability">Sustainability</TabsTrigger>
+                  <TabsTrigger value="certs">Certifications</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="physical" className="mt-4">
