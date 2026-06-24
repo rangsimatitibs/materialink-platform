@@ -1,62 +1,62 @@
-## Homepage restructure
+## Goal
 
-Rewrite the landing page (`src/pages/Index.tsx`) into 5 sections matching your script. Keep the global Header/Footer, deep-green palette, and serif/sans typography we already use.
+Add a **Properties** column to the homepage hero mock materials table. Each row gets a small "View" button that opens a right-side drawer with the full property set for that material, organized into tabs.
 
-### 1. Hero (`src/components/Hero.tsx` — rewrite)
+Purely presentational — no backend, no real data, no impact on platform tables or admin.
 
-- Eyebrow: "Material Sustainability Intelligence"
-- H1: **Choose materials with confidence.**
-- Subheadline (serif italic accent): *Link between material selection and sustainability assessment.*
-- Description: "Discover materials, compare suppliers, assess environmental impacts, simulate alternatives and generate decision reports that feed directly into your LCA and EPD workflows."
-- CTAs: **Book a demo** (primary → `/demo`) and **Explore materials** (secondary → `/platform/material-scouting`)
-- Replace right-side photo + floating card with an inline **mock interface**: a styled results table titled "Materials" with columns `Material · Supplier · Carbon footprint · Recycled content · EPD available` and 3–4 example rows (e.g. Mycelium composite, rPET pellet, Hemp fibre board, Geopolymer concrete) with realistic values, supplier names, kgCO₂e/kg, % recycled, and an EPD ✓/— badge. Pure presentational, no data fetching.
+## Scope
 
-### 2. Why MateriaLink? (new `src/components/WhyMaterialink.tsx`)
+- Only `src/components/Hero.tsx`.
+- No changes to routing, schema, or other components.
 
-Three equal cards on a light surface:
-- **Discover** — Find innovative and sustainable materials from verified suppliers.
-- **Evaluate** — Compare environmental impacts, technical properties, and sustainability metrics.
-- **Decide** — Generate decision-ready insights and feed directly into LCA and EPD workflows.
+## UI changes
 
-Each card: small icon, title, one-line description. Unified card grammar (rounded-2xl, hairline border, consistent padding).
+### Table
 
-### 3. Workflow comparison (rework `src/components/WorkflowComparison.tsx`)
+Add a 6th column "Properties" (right-aligned, narrow). Each row renders a ghost button:
 
-- Eyebrow: "This is where the magic happens"
-- Title: **Material Selection Meets Environmental Intelligence**
-- Keep the two-column "Today vs MateriaLink" diagram already in place, with the supplier / carbon / recycled / EPD chips.
-- Closing line under both panels: *"Every material choice becomes an environmental decision. MateriaLink helps you understand both simultaneously."*
+```
+[ View → ]
+```
 
-### 4. The moat — Primary supplier data (new `src/components/SupplierMoat.tsx`)
+Clicking it opens a `Sheet` (shadcn drawer, right side) with that row's full data.
 
-Dark forest-green section.
-- Eyebrow: "The moat"
-- Title: **Powered by Primary Supplier Data**
-- Lead: "Unlike traditional databases relying primarily on generic datasets, MateriaLink connects suppliers, materials, and environmental data in one platform."
-- 4-item bullet list with check icons:
-  - More accurate assessments
-  - Better supplier transparency
-  - Faster EPD and LCA workflows
-  - Reduced dependence on generic assumptions
-- Small footnote: "Reduces reliance on generic Ecoinvent-style assumptions by anchoring impact data to verified suppliers."
+### Drawer content
 
-### 5. Future vision (new `src/components/FutureVision.tsx`)
+Header: material name + supplier subtitle + EPD/recycled badges.
 
-- Eyebrow: "Future vision"
-- Title: **From Material Discovery to Environmental Product Declarations**
-- Vertical pipeline graphic (6 stacked nodes with connector lines): Discover → Compare → Assess → Simulate → Report → EPD Ready. Last node highlighted in primary green.
-- Closing one-liner: *"The fastest way to understand the environmental consequences of a material decision."*
+Tabs (shadcn `Tabs`):
 
-### Page wiring (`src/pages/Index.tsx`)
+1. **Physical** — density, tensile strength, Young's modulus, thermal conductivity, melting/processing temp (values vary per material).
+2. **Supplier** — supplier name, location, lead time, MOQ, form factor, datasheet link (mock `#`).
+3. **Sustainability** — CO₂e (kg/kg), recycled content %, biogenic carbon, end-of-life route, water use.
+4. **Certifications** — list of badges: EPD (with program, e.g. "EPD International, EN 15804"), ISO 14001, Cradle to Cradle, etc. Per-supplier, so each row carries its own list.
 
-New order: `Header → Hero → WhyMaterialink → WorkflowComparison → SupplierMoat → FutureVision → Footer`. Remove `Platform` and `Services` from the homepage (the four-categories section and the two-precision-tools section). Those components stay in the repo and remain available for the Platform sub-pages, just not on `/`.
+Each tab shows a clean two-column "label / value" grid using existing tokens (muted-foreground labels, foreground values, tabular-nums where numeric). Source line at the bottom: "Primary supplier data · sample".
 
-### Copy/SEO
+### Data shape
 
-Update the page-level JSON-LD `description` and the `sr-only` H1 to the new positioning: "MateriaLink — choose materials with confidence. Link between material selection and sustainability assessment."
+Extend `sampleRows` with a `properties` object:
 
-### Out of scope
+```ts
+{
+  physical: { density, tensile, modulus, thermal, processTemp },
+  supplier: { name, location, leadTime, moq, form, datasheet },
+  sustainability: { co2, recycled, biogenic, eol, water },
+  certifications: [{ label, detail }]
+}
+```
 
-- No new routes, no backend changes, no auth changes.
-- No design-token changes; reuse existing tokens in `index.css`.
-- The mock table is presentational only (hard-coded sample rows).
+Realistic-looking values per material (Mycelium, rPET, Hemp, Geopolymer).
+
+## Technical
+
+- Use existing `@/components/ui/sheet` and `@/components/ui/tabs` (already in repo).
+- State: a single `useState<Row | null>` for the active row; drawer open when non-null.
+- Keep all styling within existing semantic tokens (no hardcoded colors).
+- Maintain current column widths by letting Material/Supplier flex and keeping the rest compact; on narrow viewports the table already scrolls horizontally via its rounded container — add `overflow-x-auto` if needed.
+
+## Out of scope
+
+- Material Scouting, Researcher's Tool, MaterialDetail, admin tables — unchanged.
+- No new dependencies, no backend wiring.
