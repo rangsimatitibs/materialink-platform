@@ -18,6 +18,28 @@ import { useAuth } from "@/contexts/AuthContext";
 import { LogOut, User } from "lucide-react";
 import logo from "@/assets/logo.png";
 
+const ComingSoonItem = ({
+  title,
+  description,
+}: {
+  title: string;
+  description: string;
+}) => (
+  <div className="block select-none space-y-1 rounded-sm p-3 leading-none outline-none opacity-60">
+    <div className="flex items-center gap-2">
+      <span className="text-sm font-medium leading-none text-foreground">
+        {title}
+      </span>
+      <span className="inline-flex items-center rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+        Coming soon
+      </span>
+    </div>
+    <p className="line-clamp-2 text-xs leading-snug text-muted-foreground mt-1">
+      {description}
+    </p>
+  </div>
+);
+
 const Header = () => {
   const { user, isAdmin, signOut } = useAuth();
   return (
