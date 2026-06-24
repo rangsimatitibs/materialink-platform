@@ -37,6 +37,7 @@ const Index = () => {
         <WorkflowComparison />
         <SupplierMoat />
         <FutureVision />
+        <NewsletterCTA />
       </main>
       <Footer />
     </div>

@@ -7,6 +7,8 @@ import materialValidationBg from "@/assets/material-validation-bg.jpg";
 import bioprocessingBg from "@/assets/bioprocessing-bg.jpg";
 
 const ServicesLanding = () => {
+  const comingSoonIds = new Set(["material-scouting", "researchers-tool"]);
+
   const services = [
     {
       id: "material-scouting",
