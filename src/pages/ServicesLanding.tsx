@@ -7,6 +7,8 @@ import materialValidationBg from "@/assets/material-validation-bg.jpg";
 import bioprocessingBg from "@/assets/bioprocessing-bg.jpg";
 
 const ServicesLanding = () => {
+  const comingSoonIds = new Set(["material-scouting", "researchers-tool"]);
+
   const services = [
     {
       id: "material-scouting",
@@ -100,8 +102,13 @@ const ServicesLanding = () => {
             <div className="container mx-auto px-6 max-w-5xl">
               {/* Header with Icon and Title */}
               <div className="text-center mb-12">
-                <div className="w-20 h-20 bg-gradient-primary rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-glow">
+                <div className="w-20 h-20 bg-gradient-primary rounded-2xl flex items-center justify-center mx-auto mb-6 shadow-glow relative">
                   <service.icon className="w-10 h-10 text-white" />
+                  {comingSoonIds.has(service.id) && (
+                    <span className="absolute -top-2 -right-2 inline-flex items-center rounded-full bg-foreground px-3 py-1 text-[10px] font-medium uppercase tracking-wider text-background">
+                      Coming soon
+                    </span>
+                  )}
                 </div>
                 <h2 className="text-4xl font-bold text-foreground mb-4">{service.title}</h2>
                 <p className="text-xl text-muted-foreground">{service.subtitle}</p>

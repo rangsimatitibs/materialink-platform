@@ -48,17 +48,16 @@ const Services = () => {
           {services.map((s) => {
             const Icon = s.icon;
             return (
-              <Link
+              <div
                 key={s.number}
-                to={s.href}
-                className="group relative bg-primary p-8 lg:p-10 hover:bg-primary-glow/20 transition-smooth"
+                className="group relative bg-primary p-8 lg:p-10 opacity-60"
               >
                 <div className="flex items-start justify-between mb-12">
                   <div className="w-12 h-12 rounded-full glass-dark flex items-center justify-center">
                     <Icon className="w-5 h-5 text-primary-foreground" />
                   </div>
-                  <span className="text-xs uppercase tracking-[0.25em] text-primary-foreground/50 tabular-nums">
-                    {s.number}
+                  <span className="inline-flex items-center rounded-full bg-primary-foreground/10 px-2.5 py-1 text-[10px] font-medium uppercase tracking-wider text-primary-foreground/50">
+                    Coming soon
                   </span>
                 </div>
 
@@ -69,11 +68,11 @@ const Services = () => {
                   {s.description}
                 </p>
 
-                <span className="inline-flex items-center gap-2 text-sm text-primary-foreground/90 group-hover:text-primary-foreground transition-smooth">
+                <span className="inline-flex items-center gap-2 text-sm text-primary-foreground/50">
                   Discover
-                  <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-smooth" />
+                  <ArrowUpRight className="w-4 h-4" />
                 </span>
-              </Link>
+              </div>
             );
           })}
         </div>
