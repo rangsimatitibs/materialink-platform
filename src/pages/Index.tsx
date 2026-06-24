@@ -4,6 +4,7 @@ import WhyMaterialink from "@/components/WhyMaterialink";
 import WorkflowComparison from "@/components/WorkflowComparison";
 import SupplierMoat from "@/components/SupplierMoat";
 import FutureVision from "@/components/FutureVision";
+import NewsletterCTA from "@/components/NewsletterCTA";
 import Footer from "@/components/Footer";
 
 const Index = () => {
