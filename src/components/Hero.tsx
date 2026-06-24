@@ -76,10 +76,10 @@ const Hero = () => {
                 </Button>
               </Link>
               <Link
-                to="/platform/material-scouting"
+                to="/signup"
                 className="text-sm font-medium text-foreground/80 hover:text-foreground underline underline-offset-[6px] decoration-foreground/20 hover:decoration-accent transition-smooth px-2"
               >
-                Explore materials →
+                Get early access →
               </Link>
             </div>
           </div>

@@ -21,11 +21,6 @@ const Index = () => {
             url: "https://materialink.ai",
             description:
               "Choose materials with confidence. The link between material selection and sustainability assessment — discover materials, compare suppliers, assess environmental impacts and feed decisions into LCA/EPD workflows.",
-            potentialAction: {
-              "@type": "SearchAction",
-              target: "https://materialink.ai/platform/material-scouting?q={search_term_string}",
-              "query-input": "required name=search_term_string",
-            },
           }),
         }}
       />
