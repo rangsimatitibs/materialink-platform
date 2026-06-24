@@ -132,7 +132,7 @@ const About = () => {
                       </div>
                     )}
 
-                    <div className="absolute inset-0 bg-gradient-to-t from-foreground/85 via-foreground/30 to-transparent" />
+                    
 
                     <div className="absolute bottom-0 left-0 right-0 p-4">
                       <h3 className="font-display text-lg text-background mb-0.5 leading-tight">
