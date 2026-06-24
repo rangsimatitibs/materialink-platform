@@ -304,7 +304,7 @@ const Hero = () => {
       <div className="absolute bottom-0 left-0 right-0 border-b border-border" />
 
       <Sheet open={!!active} onOpenChange={(o) => !o && setActive(null)}>
-        <SheetContent className="w-full sm:max-w-lg overflow-y-auto">
+        <SheetContent className="w-full sm:max-w-xl overflow-y-auto">
           {active && (
             <>
               <SheetHeader className="text-left">
@@ -332,11 +332,11 @@ const Hero = () => {
               </SheetHeader>
 
               <Tabs defaultValue="physical" className="mt-6">
-                <TabsList className="grid grid-cols-4 w-full">
-                  <TabsTrigger value="physical">Physical</TabsTrigger>
-                  <TabsTrigger value="supplier">Supplier</TabsTrigger>
-                  <TabsTrigger value="sustainability">Sustainability</TabsTrigger>
-                  <TabsTrigger value="certs">Certifications</TabsTrigger>
+                <TabsList className="grid grid-cols-4 w-full h-auto">
+                  <TabsTrigger value="physical" className="text-xs px-1 py-1.5">Physical</TabsTrigger>
+                  <TabsTrigger value="supplier" className="text-xs px-1 py-1.5">Supplier</TabsTrigger>
+                  <TabsTrigger value="sustainability" className="text-xs px-1 py-1.5">Sustainability</TabsTrigger>
+                  <TabsTrigger value="certs" className="text-xs px-1 py-1.5">Certifications</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="physical" className="mt-4">
