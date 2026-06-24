@@ -312,7 +312,7 @@ const Subscriptions = () => {
                       {currentTier === 'free' ? 'Current Plan' : 'Manage Subscription'}
                     </Button>
                   ) : tier.tier === "free" ? (
-                    <Link to={user ? "/platform/material-scouting" : "/signup"} className="w-full">
+                    <Link to="/signup" className="w-full">
                       <Button className="w-full" variant={tier.popular ? "default" : "outline"} size="sm">
                         {tier.cta}
                         <ArrowRight className="h-4 w-4 ml-1" />
