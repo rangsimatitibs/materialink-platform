@@ -183,23 +183,23 @@ const Hero = () => {
       />
 
       <div className="container mx-auto px-6 py-20 lg:py-28 relative">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
-          <div className="lg:col-span-7 animate-fade-up">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-10 items-center">
+          <div className="lg:col-span-6 animate-fade-up">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 mb-8 rounded-full glass text-xs uppercase tracking-[0.2em] text-foreground/70">
               <span className="w-1.5 h-1.5 rounded-full bg-accent animate-pulse" />
               Material Sustainability Intelligence
             </div>
 
-            <h1 className="font-display text-[clamp(2.75rem,7vw,6.5rem)] leading-[0.95] text-foreground text-balance mb-8">
+            <h1 className="font-display text-[clamp(2.25rem,5.5vw,5rem)] leading-[1.0] text-foreground text-balance mb-6">
               Choose materials with{" "}
               <em className="italic font-normal text-primary">confidence.</em>
             </h1>
 
-            <p className="font-display text-2xl md:text-3xl text-foreground/90 italic mb-6 text-pretty">
+            <p className="font-display text-xl md:text-2xl text-foreground/90 italic mb-5 text-pretty">
               Link between material selection and sustainability assessment.
             </p>
 
-            <p className="text-lg md:text-xl text-muted-foreground max-w-xl leading-relaxed font-light mb-10 text-pretty">
+            <p className="text-base md:text-lg text-muted-foreground max-w-xl leading-relaxed font-light mb-8 text-pretty">
               Discover materials, compare suppliers, assess environmental impacts,
               simulate alternatives and generate decision reports that feed directly
               into your LCA and EPD workflows.
@@ -225,7 +225,7 @@ const Hero = () => {
           </div>
 
           {/* Right: mock interface */}
-          <div className="lg:col-span-5 relative animate-fade-up" style={{ animationDelay: "0.15s" }}>
+          <div className="lg:col-span-6 relative animate-fade-up" style={{ animationDelay: "0.15s" }}>
             <div className="relative rounded-2xl overflow-hidden bg-card border border-border shadow-large">
               {/* Window chrome */}
               <div className="flex items-center justify-between px-5 py-3 border-b border-border bg-muted/40">
