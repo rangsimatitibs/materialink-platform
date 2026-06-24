@@ -67,28 +67,18 @@ const Header = () => {
                     <ul className="grid w-[380px] gap-1 p-3">
                       <li>
                         <NavigationMenuLink asChild>
-                          <Link
-                            to="/platform/material-scouting"
-                            className="block select-none space-y-1 rounded-sm p-3 leading-none no-underline outline-none transition-colors hover:bg-muted"
-                          >
-                            <div className="text-sm font-medium leading-none text-foreground">Material Scouting</div>
-                            <p className="line-clamp-2 text-xs leading-snug text-muted-foreground mt-1">
-                              Discover sustainable materials with AI-assisted search
-                            </p>
-                          </Link>
+                          <ComingSoonItem
+                            title="Material Scouting"
+                            description="Discover sustainable materials with AI-assisted search"
+                          />
                         </NavigationMenuLink>
                       </li>
                       <li>
                         <NavigationMenuLink asChild>
-                          <Link
-                            to="/platform/researchers-tool"
-                            className="block select-none space-y-1 rounded-sm p-3 leading-none no-underline outline-none transition-colors hover:bg-muted"
-                          >
-                            <div className="text-sm font-medium leading-none text-foreground">Researcher's Tool</div>
-                            <p className="line-clamp-2 text-xs leading-snug text-muted-foreground mt-1">
-                              Property prediction, lab recipes & material library
-                            </p>
-                          </Link>
+                          <ComingSoonItem
+                            title="Researcher's Tool"
+                            description="Property prediction, lab recipes & material library"
+                          />
                         </NavigationMenuLink>
                       </li>
                     </ul>
