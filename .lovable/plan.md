@@ -1,94 +1,99 @@
-# Remove Material Scouting & Researcher's Tool
 
-Full teardown of both features across frontend, admin, and backend. Home page (`/`) is left untouched per your instruction — including `SupplierMoat`, even though it references suppliers. The new versions can be built later on a clean slate.
+# Phase 1 — Database Schema + Role System
 
-## 1. Public routes & pages
+Scope: build the full backend data model and role/access foundation for the new platform. No UI, no page routes, no styling changes. Home page and existing styling/fonts stay exactly as they are. Admin will later manage content through this schema; UI comes in Phase 2.
 
-Delete from `src/App.tsx` and the filesystem:
-- `/platform/material-scouting` → `src/pages/platform/MaterialScouting.tsx`
-- `/platform/material/:id` → `src/pages/platform/MaterialDetail.tsx`
-- `/platform/researchers-tool` → `src/pages/platform/ResearchersTool.tsx`
-- `/platform/process-optimization` (already orphaned) → `src/pages/platform/ProcessOptimization.tsx`
-- `/services` → `src/pages/ServicesLanding.tsx`
+## Roles
 
-Remove their imports from `App.tsx`. Delete the whole `src/pages/platform/` folder.
+Collapse `app_role` enum to: `free`, `researcher`, `industrial_premium`, `producer`, `admin`.
 
-## 2. Header, Footer, SignUp, Subscriptions
+- Existing `admin` rows in `user_roles` are preserved.
+- Any other role rows are remapped to `free` before the enum swap (safe default; no admins affected).
+- Enum swap is done via a new enum + column cast + drop old, so the change is atomic.
+- `has_role(_user_id, _role)` stays as-is (still `SECURITY DEFINER`, still used by RLS).
+- New helper functions:
+  - `is_premium(uid)` → true for `industrial_premium` or `admin`
+  - `is_paid(uid)` → true for `researcher`, `industrial_premium`, `admin`
+  - `is_producer(uid)` → true for `producer` or `admin`
+  Each `STABLE SECURITY DEFINER` with `search_path=public`.
 
-- `src/components/Header.tsx`: remove the "Platform" `NavigationMenu` (Material Scouting + Researcher's Tool coming-soon items). Nav becomes: Home · About.
-- `src/components/Footer.tsx`: drop any Platform column links to the two features / `/services`.
-- `src/pages/SignUp.tsx` and `src/pages/Subscriptions.tsx`: remove copy/links that mention Material Scouting, Researcher's Tool, or `/services`. Keep the pages themselves.
+## Tables (all in `public`)
 
-## 3. Components & hooks used only by the removed features
+Every table below gets: standard `id uuid PK`, `created_at`, `updated_at` with trigger, RLS enabled, and explicit GRANTs.
 
-Delete:
-- `src/components/Services.tsx` (marketing block for the two tools; not used on home)
-- `src/components/Platform.tsx`
-- `src/components/PropertyExplorer.tsx`
-- `src/components/CategorizedProperties.tsx`
-- `src/components/AdvancedPropertySearch.tsx`
-- `src/components/BibliographySearch.tsx`
-- `src/components/PremiumGate.tsx`, `src/components/TierGate.tsx`, `src/components/UsageMeter.tsx`, `src/components/SubscriptionBadge.tsx`, `src/components/BillingToggle.tsx` (all gate UI for these tools)
-- `src/components/optimization/*` (whole folder)
-- `src/hooks/useMaterialsData.ts`, `useResearchData.ts`, `useUnifiedMaterialSearch.ts`, `useOptimizationHistory.ts`, `useSubscription.ts`
-- `src/data/equipmentRecommendations.ts`, `processTemplates.ts`, `researchProperties.ts`, `regulationDescriptions.ts`
-- `src/utils/propertyCategories.ts`
-- `src/assets/material-scouting-bg.jpg`, `material-validation-bg.jpg`, `bioprocessing-bg.jpg` if unreferenced after the deletions.
+### Identity / org
+- `profiles` — 1:1 with `auth.users`, holds `full_name`, `company_id` (nullable), `account_type` (mirrors primary role for quick reads). Auto-created via `handle_new_user` trigger on `auth.users`.
+- `companies` — `company_name`, `slug`, `logo_url`, `country`, `website`, `description`, `company_type` (`producer` | `buyer` | `other`), `sustainability_focus`, `verified_status` (`pending`|`approved`|`rejected`).
 
-Anything still referenced from the home page / About / Auth / SignUp / Subscriptions stays.
+### Taxonomy (admin-managed lookups)
+- `material_categories` (name, slug, parent_id nullable for subcategories)
+- `applications` (name, industry, description)
+- `regulations` (name, region, description)
+- `certifications` (name, issuing_body, region, description)
+- `sources` (source_type, title, url, doi, organization, publication_year, notes)
 
-## 4. Admin console
+### General materials layer
+- `general_materials` — name, slug, short_description, category_id, chemical_formula, chemical_structure_url, sustainability_summary, end_of_life_summary, production_scale_maturity, data_confidence (`high`|`medium`|`low`|`ai_assisted`|`literature`|`supplier_reported`), status (`draft`|`published`).
+- `general_material_synonyms` — material_id, synonym.
+- `general_material_tags` — material_id, tag.
 
-Per your choice, remove all data-management pages. Admin console keeps only **Dashboard** and **Waitlist Signups**.
+### Supplier / producer layer
+- `supplier_material_grades` — general_material_id, company_id, grade_name, description, production_scale, availability_type (`wholesale`|`on_demand`|`pilot`|`industrial`), moq, country_of_production, uniqueness, datasheet_url, verified_status, premium_visibility (bool), status (`draft`|`pending_review`|`approved`|`rejected`).
 
-- `src/App.tsx`: drop the admin routes for `materials`, `suppliers`, `research-materials`, `lab-recipes`, `external-sources`, `excluded-terms`.
-- Delete the page files: `MaterialsAdmin.tsx`, `SuppliersAdmin.tsx`, `ResearchMaterialsAdmin.tsx`, `LabRecipesAdmin.tsx`, `ExternalSourcesAdmin.tsx`, `ExcludedTermsAdmin.tsx` and their forms under `src/components/admin/` (`MaterialForm`, `SupplierForm`, `ResearchMaterialForm`, `LabRecipeForm`).
-- `src/pages/admin/AdminLayout.tsx`: remove the `Your Data` and `External Sources` sidebar sections. Keep Dashboard + User Management (Waitlist).
-- `src/pages/admin/Dashboard.tsx`: rewrite to show only the Waitlist Signups stat + recent signups. Drop the materials/suppliers/research/lab-recipes cards, category pie chart, and country bar chart.
+### Polymorphic property/relation tables
+Use `owner_type` (`general_material`|`supplier_grade`) + `owner_id` to serve both layers from one table (as your plan specified).
 
-## 5. Backend teardown
+- `material_properties` — property_name, value_min, value_max, exact_value, unit, test_standard, source_id, confidence_level.
+- `material_applications` — application_id.
+- `material_regulations` — regulation_id, status, evidence_url, notes.
+- `material_certifications` — certification_id, status, document_url, expiry_date.
+- `sustainability_indicators` — bio_based_content, recycled_content, carbon_footprint_value, carbon_footprint_unit, lca_available, epd_available, carbon_credits, notes.
 
-Delete edge functions (via `supabase--delete_edge_functions`):
-- `ai-material-search`
-- `ai-property-lookup`
-- `ai-bibliography-search`
-- `fetch-material-data`
+### User workflows
+- `saved_materials` — user_id, owner_type, owner_id.
+- `material_comparisons` — user_id, name, items jsonb.
+- `introduction_requests` — user_id, supplier_grade_id, company_id, application, quantity, timeline, message, status (`submitted`|`reviewing`|`introduced`|`in_discussion`|`closed_won`|`closed_lost`), deal_value, success_fee_status.
+- `material_edit_reports` — reporter_user_id, owner_type, owner_id, reason, details, status.
+- `material_requests` — user_id, description, application, notes, status (for "can't find it" submissions).
 
-Also delete their `supabase/functions/<name>/` folders.
+### AI fill-in cache
+- `ai_material_drafts` — general_material_id nullable, prompt, generated_payload jsonb, model, reviewed_by, status (`pending`|`approved`|`rejected`). Used later when admin triggers Lovable AI to draft a missing profile.
 
-One SQL migration (`supabase--migration`) with `DROP TABLE ... CASCADE` for every table tied to these features:
+## RLS policy summary (plain English)
 
-```text
-application_match_considerations, application_match_strengths, application_matches,
-material_applications, material_properties, material_properties_database,
-material_property_sources, material_property_values, material_regulations,
-material_sustainability, material_synonyms, materials,
-supplier_certifications, supplier_detailed_properties, supplier_properties, suppliers,
-research_material_applications, research_material_properties, research_materials,
-lab_recipe_materials, lab_recipe_steps, lab_recipes,
-bibliography_entries, bibliography_libraries, saved_bibliography_entries,
-external_data_sources, excluded_search_terms,
-property_lookup_cache, optimization_runs,
-daily_usage, monthly_usage, subscriptions
-```
+- **profiles**: user can read/update their own row; admins can read/update all.
+- **companies**: producers can read/update their own company; premium + admin can read approved companies; public/free users cannot read.
+- **Taxonomy tables** (categories, applications, regulations, certifications, sources): everyone authenticated can read; only admins can write.
+- **general_materials + synonyms + tags**: any authenticated user (free and up) can read `status='published'`; admins write. Public visitors (anon) get no read access — matches "must create account to see database".
+- **supplier_material_grades + linked polymorphic rows scoped to a supplier_grade**: readable only by `industrial_premium` and `admin`. Producers can read/write their own company's grades (draft/pending). No visibility to free/researcher — enforced at the row level, so non-premium users literally cannot fetch supplier rows.
+- **Polymorphic tables** (`material_properties`, `material_applications`, `material_regulations`, `material_certifications`, `sustainability_indicators`): a row is readable if the underlying owner row is readable. Enforced via `EXISTS` subqueries against `general_materials` or `supplier_material_grades` combined with role checks.
+- **saved_materials, material_comparisons, material_requests, material_edit_reports**: owner-only (`user_id = auth.uid()`); admins can read all.
+- **introduction_requests**: buyer sees their own; producer sees requests for their company's grades; admin sees all.
+- **ai_material_drafts**: admin-only.
 
-Also `DROP FUNCTION` for `search_materials`, `get_user_tier`, `has_tier_access` (no longer referenced once `useSubscription` is gone).
+## GRANTs
 
-Delete the `material-images` storage bucket in the same migration.
+Every public table gets the correct grants in the same migration as `CREATE TABLE`. Default pattern:
 
-Kept: `user_roles`, `has_role`, `waitlist_signups`, `update_updated_at_column`, and the auth schema — all still needed for admin + waitlist.
+- `GRANT SELECT, INSERT, UPDATE, DELETE ON public.<table> TO authenticated;`
+- `GRANT ALL ON public.<table> TO service_role;`
+- `anon` is granted `SELECT` only on nothing here — the platform is fully gated (no public reads of any content table).
 
-## 6. Verification
+## Frontend impact this phase
 
-- `bun run build` clean (no orphan imports).
-- `/` renders identically to before.
-- `/admin` shows only Dashboard + Waitlist in the sidebar; Dashboard shows only waitlist stats.
-- `/platform/...` and `/services` return the 404 page.
-- Supabase types regenerate without the dropped tables.
+Minimal, non-visual only:
+- Regenerated `src/integrations/supabase/types.ts` (auto).
+- `AuthContext` gains a `role` field alongside `isAdmin` so future gating code can read it. No UI changes, no route changes, no style changes.
+- Admin dashboard/waitlist page untouched.
 
-## Technical notes
+## Out of scope (Phase 2+)
 
-- `SupplierMoat` on the home page currently reads no data — it's static marketing copy — so dropping the `suppliers` table doesn't break it. It stays.
-- `Subscriptions.tsx` currently just redirects to the early-access signup (per project memory), so removing `useSubscription` won't break its behavior; I'll strip the imports and any tier-specific copy referencing the two removed tools.
-- Migration uses `DROP ... CASCADE` so residual FKs / policies come along cleanly.
-- This is destructive on the DB side — you confirmed "Delete everything." Rows in `materials`, `suppliers`, `research_materials`, `lab_recipes`, `bibliography_*`, and `subscriptions` will be lost.
+- All new admin CRUD pages (materials, categories, companies, supplier grades, approvals).
+- Authenticated dashboard, search, material profile pages, supplier layer UI, compare, saved library.
+- Producer dashboard, introduction request workflow UI.
+- External DB linking + Lovable AI fill-in edge function (schema is ready for it via `ai_material_drafts` + `sources`).
+- Pricing / paywall wiring; per current memory rule, upgrade CTAs will continue to route to the early-access waitlist when UI is built.
+
+## Deliverable
+
+One Supabase migration containing: enum change, all tables, indexes on FKs + slugs, `updated_at` triggers, RLS enable + policies, GRANTs, helper role functions, `handle_new_user` trigger for `profiles`. Plus a tiny non-visual `AuthContext` update to expose the current role.
