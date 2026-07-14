@@ -7,11 +7,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/contexts/AuthContext";
-import { LogOut, User } from "lucide-react";
+import { LogOut, User, Inbox, Factory } from "lucide-react";
 import logo from "@/assets/logo.png";
 
 const Header = () => {
-  const { user, isAdmin, signOut } = useAuth();
+  const { user, isAdmin, isPremium, isProducer, signOut } = useAuth();
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
       <div className="container mx-auto px-6 py-5">
@@ -54,6 +54,22 @@ const Header = () => {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
+                    {isPremium && (
+                      <DropdownMenuItem asChild>
+                        <Link to="/app/requests">
+                          <Inbox className="h-4 w-4 mr-2" />
+                          My requests
+                        </Link>
+                      </DropdownMenuItem>
+                    )}
+                    {isProducer && (
+                      <DropdownMenuItem asChild>
+                        <Link to="/app/producer">
+                          <Factory className="h-4 w-4 mr-2" />
+                          Producer console
+                        </Link>
+                      </DropdownMenuItem>
+                    )}
                     <DropdownMenuItem onClick={signOut}>
                       <LogOut className="h-4 w-4 mr-2" />
                       Sign Out

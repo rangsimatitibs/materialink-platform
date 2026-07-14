@@ -16,6 +16,8 @@ import CrudResourcePage from "./pages/admin/CrudResourcePage";
 import PlatformDashboard from "./pages/app/PlatformDashboard";
 import Search from "./pages/app/Search";
 import MaterialProfile from "./pages/app/MaterialProfile";
+import MyRequests from "./pages/app/MyRequests";
+import ProducerDashboard from "./pages/app/ProducerDashboard";
 import BookDemo from "./pages/BookDemo";
 import NotFound from "./pages/NotFound";
 
@@ -38,6 +40,8 @@ const App = () => (
             <Route path="/app" element={<ProtectedRoute><PlatformDashboard /></ProtectedRoute>} />
             <Route path="/app/search" element={<ProtectedRoute><Search /></ProtectedRoute>} />
             <Route path="/app/materials/:slug" element={<ProtectedRoute><MaterialProfile /></ProtectedRoute>} />
+            <Route path="/app/requests" element={<ProtectedRoute><MyRequests /></ProtectedRoute>} />
+            <Route path="/app/producer" element={<ProtectedRoute><ProducerDashboard /></ProtectedRoute>} />
 
             <Route path="/admin" element={<ProtectedRoute requireAdmin><AdminLayout /></ProtectedRoute>}>
               <Route index element={<Dashboard />} />
