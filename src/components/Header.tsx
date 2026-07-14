@@ -1,14 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-} from "@/components/ui/navigation-menu";
-import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -17,28 +9,6 @@ import {
 import { useAuth } from "@/contexts/AuthContext";
 import { LogOut, User } from "lucide-react";
 import logo from "@/assets/logo.png";
-
-const ComingSoonItem = ({
-  title,
-  description,
-}: {
-  title: string;
-  description: string;
-}) => (
-  <div className="block select-none space-y-1 rounded-sm p-3 leading-none outline-none opacity-60">
-    <div className="flex items-center gap-2">
-      <span className="text-sm font-medium leading-none text-foreground">
-        {title}
-      </span>
-      <span className="inline-flex items-center rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
-        Coming soon
-      </span>
-    </div>
-    <p className="line-clamp-2 text-xs leading-snug text-muted-foreground mt-1">
-      {description}
-    </p>
-  </div>
-);
 
 const Header = () => {
   const { user, isAdmin, signOut } = useAuth();
@@ -56,37 +26,6 @@ const Header = () => {
             <Link to="/" className="text-sm text-foreground/80 hover:text-foreground transition-smooth">
               Home
             </Link>
-
-            <NavigationMenu>
-              <NavigationMenuList>
-                <NavigationMenuItem>
-                  <NavigationMenuTrigger className="text-sm font-normal bg-transparent hover:bg-transparent data-[state=open]:bg-transparent px-0 text-foreground/80 hover:text-foreground">
-                    Platform
-                  </NavigationMenuTrigger>
-                  <NavigationMenuContent className="bg-popover">
-                    <ul className="grid w-[380px] gap-1 p-3">
-                      <li>
-                        <NavigationMenuLink asChild>
-                          <ComingSoonItem
-                            title="Material Scouting"
-                            description="Discover sustainable materials with AI-assisted search"
-                          />
-                        </NavigationMenuLink>
-                      </li>
-                      <li>
-                        <NavigationMenuLink asChild>
-                          <ComingSoonItem
-                            title="Researcher's Tool"
-                            description="Property prediction, lab recipes & material library"
-                          />
-                        </NavigationMenuLink>
-                      </li>
-                    </ul>
-                  </NavigationMenuContent>
-                </NavigationMenuItem>
-              </NavigationMenuList>
-            </NavigationMenu>
-
             <Link to="/about" className="text-sm text-foreground/80 hover:text-foreground transition-smooth">
               About
             </Link>

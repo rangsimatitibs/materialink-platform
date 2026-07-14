@@ -9,19 +9,8 @@ import Index from "./pages/Index";
 import About from "./pages/About";
 import Auth from "./pages/Auth";
 import SignUp from "./pages/SignUp";
-import ServicesLanding from "./pages/ServicesLanding";
-import MaterialScouting from "./pages/platform/MaterialScouting";
-import MaterialDetail from "./pages/platform/MaterialDetail";
-import ResearchersTool from "./pages/platform/ResearchersTool";
-
 import AdminLayout from "./pages/admin/AdminLayout";
 import Dashboard from "./pages/admin/Dashboard";
-import MaterialsAdmin from "./pages/admin/MaterialsAdmin";
-import SuppliersAdmin from "./pages/admin/SuppliersAdmin";
-import ResearchMaterialsAdmin from "./pages/admin/ResearchMaterialsAdmin";
-import LabRecipesAdmin from "./pages/admin/LabRecipesAdmin";
-import ExternalSourcesAdmin from "./pages/admin/ExternalSourcesAdmin";
-import ExcludedTermsAdmin from "./pages/admin/ExcludedTermsAdmin";
 import WaitlistAdmin from "./pages/admin/WaitlistAdmin";
 import BookDemo from "./pages/BookDemo";
 import NotFound from "./pages/NotFound";
@@ -40,20 +29,10 @@ const App = () => (
             <Route path="/about" element={<About />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/signup" element={<SignUp />} />
-            <Route path="/services" element={<ServicesLanding />} />
             <Route path="/demo" element={<BookDemo />} />
-            <Route path="/platform/material-scouting" element={<MaterialScouting />} />
-            <Route path="/platform/material/:id" element={<MaterialDetail />} />
-            <Route path="/platform/researchers-tool" element={<ResearchersTool />} />
             
             <Route path="/admin" element={<ProtectedRoute requireAdmin><AdminLayout /></ProtectedRoute>}>
               <Route index element={<Dashboard />} />
-              <Route path="materials" element={<MaterialsAdmin />} />
-              <Route path="suppliers" element={<SuppliersAdmin />} />
-              <Route path="research-materials" element={<ResearchMaterialsAdmin />} />
-              <Route path="lab-recipes" element={<LabRecipesAdmin />} />
-              <Route path="external-sources" element={<ExternalSourcesAdmin />} />
-              <Route path="excluded-terms" element={<ExcludedTermsAdmin />} />
               <Route path="waitlist" element={<WaitlistAdmin />} />
             </Route>
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

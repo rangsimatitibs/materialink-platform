@@ -19,26 +19,8 @@ const Footer = () => {
           </div>
 
           {/* Platform */}
-          <div className="md:col-span-3">
-            <h3 className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-4">Platform</h3>
-          <ul className="space-y-2 text-sm">
-              <li className="flex items-center gap-2 text-muted-foreground">
-                <span>Material Scouting</span>
-                <span className="inline-flex items-center rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
-                  Coming soon
-                </span>
-              </li>
-              <li className="flex items-center gap-2 text-muted-foreground">
-                <span>Researcher's Tool</span>
-                <span className="inline-flex items-center rounded-full bg-muted px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
-                  Coming soon
-                </span>
-              </li>
-            </ul>
-          </div>
-
           {/* Company */}
-          <div className="md:col-span-2">
+          <div className="md:col-span-5">
             <h3 className="text-xs uppercase tracking-[0.2em] text-muted-foreground mb-4">Company</h3>
             <ul className="space-y-2 text-sm">
               <li>
