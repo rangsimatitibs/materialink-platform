@@ -4,10 +4,10 @@ import Footer from "@/components/Footer";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/AuthContext";
-import { Search, BookMarked, GitCompare } from "lucide-react";
+import { Search, Inbox, Factory } from "lucide-react";
 
 export default function PlatformDashboard() {
-  const { user, role } = useAuth();
+  const { user, role, isPremium, isProducer } = useAuth();
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <Header />
@@ -38,25 +38,49 @@ export default function PlatformDashboard() {
               </Card>
             </Link>
 
-            <Card className="opacity-60 h-full">
-              <CardHeader className="pb-3">
-                <BookMarked className="h-5 w-5 text-muted-foreground" />
-                <CardTitle className="text-lg mt-2">My library</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground">Coming soon.</p>
-              </CardContent>
-            </Card>
+            {isPremium ? (
+              <Link to="/app/requests">
+                <Card className="hover:border-primary transition-colors h-full">
+                  <CardHeader className="pb-3">
+                    <Inbox className="h-5 w-5 text-primary" />
+                    <CardTitle className="text-lg mt-2">My requests</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-muted-foreground">
+                      Track supplier introductions you've requested.
+                    </p>
+                  </CardContent>
+                </Card>
+              </Link>
+            ) : (
+              <Card className="opacity-60 h-full">
+                <CardHeader className="pb-3">
+                  <Inbox className="h-5 w-5 text-muted-foreground" />
+                  <CardTitle className="text-lg mt-2">Supplier intelligence</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-sm text-muted-foreground">
+                    Available on industrial premium accounts.
+                  </p>
+                </CardContent>
+              </Card>
+            )}
 
-            <Card className="opacity-60 h-full">
-              <CardHeader className="pb-3">
-                <GitCompare className="h-5 w-5 text-muted-foreground" />
-                <CardTitle className="text-lg mt-2">Compare</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground">Coming soon.</p>
-              </CardContent>
-            </Card>
+            {isProducer && (
+              <Link to="/app/producer">
+                <Card className="hover:border-primary transition-colors h-full">
+                  <CardHeader className="pb-3">
+                    <Factory className="h-5 w-5 text-primary" />
+                    <CardTitle className="text-lg mt-2">Producer console</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-sm text-muted-foreground">
+                      Manage your listed grades and incoming buyer introductions.
+                    </p>
+                  </CardContent>
+                </Card>
+              </Link>
+            )}
           </div>
 
           <div className="pt-4">
