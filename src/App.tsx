@@ -12,6 +12,10 @@ import SignUp from "./pages/SignUp";
 import AdminLayout from "./pages/admin/AdminLayout";
 import Dashboard from "./pages/admin/Dashboard";
 import WaitlistAdmin from "./pages/admin/WaitlistAdmin";
+import CrudResourcePage from "./pages/admin/CrudResourcePage";
+import PlatformDashboard from "./pages/app/PlatformDashboard";
+import Search from "./pages/app/Search";
+import MaterialProfile from "./pages/app/MaterialProfile";
 import BookDemo from "./pages/BookDemo";
 import NotFound from "./pages/NotFound";
 
@@ -30,10 +34,15 @@ const App = () => (
             <Route path="/auth" element={<Auth />} />
             <Route path="/signup" element={<SignUp />} />
             <Route path="/demo" element={<BookDemo />} />
-            
+
+            <Route path="/app" element={<ProtectedRoute><PlatformDashboard /></ProtectedRoute>} />
+            <Route path="/app/search" element={<ProtectedRoute><Search /></ProtectedRoute>} />
+            <Route path="/app/materials/:slug" element={<ProtectedRoute><MaterialProfile /></ProtectedRoute>} />
+
             <Route path="/admin" element={<ProtectedRoute requireAdmin><AdminLayout /></ProtectedRoute>}>
               <Route index element={<Dashboard />} />
               <Route path="waitlist" element={<WaitlistAdmin />} />
+              <Route path=":resource" element={<CrudResourcePage />} />
             </Route>
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
