@@ -29,6 +29,11 @@ const Header = () => {
             <Link to="/about" className="text-sm text-foreground/80 hover:text-foreground transition-smooth">
               About
             </Link>
+            {user && (
+              <Link to="/app" className="text-sm text-foreground/80 hover:text-foreground transition-smooth">
+                Platform
+              </Link>
+            )}
           </div>
 
           <div className="flex items-center gap-3">
