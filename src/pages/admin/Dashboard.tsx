@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Users, Loader2 } from "lucide-react";
+import { Users, Loader2, Database, Factory, Tags } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 
@@ -52,11 +52,11 @@ export default function Dashboard() {
       <div>
         <h1 className="text-3xl font-bold">Dashboard Overview</h1>
         <p className="text-muted-foreground mt-1">
-          Material Scouting and Researcher's Tool have been retired in preparation for their next versions.
+          Manage the general materials database, taxonomy, and supplier layer.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between pb-2">
             <CardTitle className="text-sm font-medium">Waitlist Signups</CardTitle>
@@ -71,6 +71,10 @@ export default function Dashboard() {
             </Link>
           </CardContent>
         </Card>
+
+        <QuickCard title="Materials" icon={Database} href="/admin/materials" />
+        <QuickCard title="Taxonomy" icon={Tags} href="/admin/categories" />
+        <QuickCard title="Suppliers" icon={Factory} href="/admin/companies" />
       </div>
 
       <Card>
@@ -104,5 +108,29 @@ export default function Dashboard() {
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+function QuickCard({
+  title,
+  icon: Icon,
+  href,
+}: {
+  title: string;
+  icon: typeof Users;
+  href: string;
+}) {
+  return (
+    <Link to={href}>
+      <Card className="h-full hover:border-primary transition-colors">
+        <CardHeader className="flex flex-row items-center justify-between pb-2">
+          <CardTitle className="text-sm font-medium">{title}</CardTitle>
+          <Icon className="h-4 w-4 text-muted-foreground" />
+        </CardHeader>
+        <CardContent>
+          <p className="text-xs text-muted-foreground">Manage records →</p>
+        </CardContent>
+      </Card>
+    </Link>
   );
 }
