@@ -16,35 +16,50 @@ export type Database = {
     Tables: {
       ai_material_drafts: {
         Row: {
+          applied_at: string | null
           created_at: string
+          created_by: string | null
           general_material_id: string | null
           generated_payload: Json | null
           id: string
+          material_name: string | null
           model: string | null
           prompt: string | null
           reviewed_by: string | null
+          reviewer_notes: string | null
+          source: string
           status: string
           updated_at: string
         }
         Insert: {
+          applied_at?: string | null
           created_at?: string
+          created_by?: string | null
           general_material_id?: string | null
           generated_payload?: Json | null
           id?: string
+          material_name?: string | null
           model?: string | null
           prompt?: string | null
           reviewed_by?: string | null
+          reviewer_notes?: string | null
+          source?: string
           status?: string
           updated_at?: string
         }
         Update: {
+          applied_at?: string | null
           created_at?: string
+          created_by?: string | null
           general_material_id?: string | null
           generated_payload?: Json | null
           id?: string
+          material_name?: string | null
           model?: string | null
           prompt?: string | null
           reviewed_by?: string | null
+          reviewer_notes?: string | null
+          source?: string
           status?: string
           updated_at?: string
         }
@@ -220,6 +235,7 @@ export type Database = {
       }
       general_materials: {
         Row: {
+          auto_ai_enabled: boolean
           category_id: string | null
           chemical_formula: string | null
           chemical_structure_url: string | null
@@ -236,6 +252,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          auto_ai_enabled?: boolean
           category_id?: string | null
           chemical_formula?: string | null
           chemical_structure_url?: string | null
@@ -252,6 +269,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          auto_ai_enabled?: boolean
           category_id?: string | null
           chemical_formula?: string | null
           chemical_structure_url?: string | null
@@ -786,7 +804,10 @@ export type Database = {
           moq: string | null
           premium_visibility: boolean
           production_scale: string | null
+          reviewer_notes: string | null
           status: string
+          submitted_at: string | null
+          submitted_by: string | null
           uniqueness: string | null
           updated_at: string
           verified_status: string
@@ -804,7 +825,10 @@ export type Database = {
           moq?: string | null
           premium_visibility?: boolean
           production_scale?: string | null
+          reviewer_notes?: string | null
           status?: string
+          submitted_at?: string | null
+          submitted_by?: string | null
           uniqueness?: string | null
           updated_at?: string
           verified_status?: string
@@ -822,7 +846,10 @@ export type Database = {
           moq?: string | null
           premium_visibility?: boolean
           production_scale?: string | null
+          reviewer_notes?: string | null
           status?: string
+          submitted_at?: string | null
+          submitted_by?: string | null
           uniqueness?: string | null
           updated_at?: string
           verified_status?: string
@@ -948,6 +975,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      apply_material_draft: { Args: { _draft_id: string }; Returns: string }
       can_read_owner: {
         Args: { _owner_id: string; _owner_type: string }
         Returns: boolean
@@ -967,6 +995,18 @@ export type Database = {
       is_paid: { Args: { _uid: string }; Returns: boolean }
       is_premium: { Args: { _uid: string }; Returns: boolean }
       is_producer: { Args: { _uid: string }; Returns: boolean }
+      update_own_company: {
+        Args: {
+          _company_id: string
+          _company_name: string
+          _country: string
+          _description: string
+          _logo_url: string
+          _sustainability_focus: string
+          _website: string
+        }
+        Returns: undefined
+      }
     }
     Enums: {
       app_role:
