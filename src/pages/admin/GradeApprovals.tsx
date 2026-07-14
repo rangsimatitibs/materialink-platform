@@ -44,7 +44,10 @@ export default function GradeApprovals() {
 
   const update = async (id: string, status: string, verified?: string) => {
     setBusy(id);
-    const patch: Record<string, unknown> = { status, reviewer_notes: notes[id] ?? null };
+    const patch: { status: string; reviewer_notes: string | null; verified_status?: string } = {
+      status,
+      reviewer_notes: notes[id] ?? null,
+    };
     if (verified) patch.verified_status = verified;
     const { error } = await supabase.from("supplier_material_grades").update(patch).eq("id", id);
     setBusy(null);
