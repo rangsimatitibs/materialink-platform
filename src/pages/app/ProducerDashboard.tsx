@@ -15,6 +15,8 @@ import {
 } from "@/components/ui/select";
 import { toast } from "@/hooks/use-toast";
 import { Loader2, Factory, Building2 } from "lucide-react";
+import AddGradeDialog from "@/components/app/AddGradeDialog";
+import EditCompanyDialog from "@/components/app/EditCompanyDialog";
 
 type Company = {
   id: string;
@@ -22,6 +24,10 @@ type Company = {
   country: string | null;
   verified_status: string;
   company_type: string;
+  website: string | null;
+  description: string | null;
+  sustainability_focus: string | null;
+  logo_url: string | null;
 };
 
 type Grade = {
@@ -56,9 +62,9 @@ export default function ProducerDashboard() {
   const [requests, setRequests] = useState<Request[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  const load = async () => {
     if (!user) return;
-    (async () => {
+    setLoading(true);
       const { data: profile } = await supabase
         .from("profiles")
         .select("company_id")
@@ -89,7 +95,11 @@ export default function ProducerDashboard() {
       setGrades((g as unknown as Grade[]) || []);
       setRequests((r as unknown as Request[]) || []);
       setLoading(false);
-    })();
+  };
+
+  useEffect(() => {
+    load();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
   const updateStatus = async (id: string, status: string) => {
@@ -139,37 +149,54 @@ export default function ProducerDashboard() {
               {company && (
                 <Card>
                   <CardHeader>
-                    <CardTitle className="flex items-center gap-2">
-                      <Building2 className="h-5 w-5 text-primary" />
-                      {company.company_name}
-                    </CardTitle>
+                    <div className="flex items-center justify-between gap-2">
+                      <CardTitle className="flex items-center gap-2">
+                        <Building2 className="h-5 w-5 text-primary" />
+                        {company.company_name}
+                      </CardTitle>
+                      <EditCompanyDialog company={company} onUpdated={load} />
+                    </div>
                   </CardHeader>
-                  <CardContent className="flex flex-wrap gap-2 text-sm">
-                    <Badge variant="outline" className="capitalize">
-                      {company.company_type}
-                    </Badge>
-                    {company.country && <Badge variant="outline">{company.country}</Badge>}
-                    <Badge
-                      variant={company.verified_status === "verified" ? "secondary" : "outline"}
-                      className="capitalize"
-                    >
-                      {company.verified_status}
-                    </Badge>
+                  <CardContent className="space-y-3">
+                    <div className="flex flex-wrap gap-2 text-sm">
+                      <Badge variant="outline" className="capitalize">
+                        {company.company_type}
+                      </Badge>
+                      {company.country && <Badge variant="outline">{company.country}</Badge>}
+                      <Badge
+                        variant={company.verified_status === "verified" ? "secondary" : "outline"}
+                        className="capitalize"
+                      >
+                        {company.verified_status}
+                      </Badge>
+                    </div>
+                    {company.description && (
+                      <p className="text-sm text-muted-foreground">{company.description}</p>
+                    )}
+                    {company.sustainability_focus && (
+                      <p className="text-xs text-muted-foreground">
+                        <span className="font-medium text-foreground">Sustainability focus:</span>{" "}
+                        {company.sustainability_focus}
+                      </p>
+                    )}
                   </CardContent>
                 </Card>
               )}
 
               <Card>
                 <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Factory className="h-5 w-5 text-primary" />
-                    Your grades ({grades.length})
-                  </CardTitle>
+                  <div className="flex items-center justify-between gap-2">
+                    <CardTitle className="flex items-center gap-2">
+                      <Factory className="h-5 w-5 text-primary" />
+                      Your grades ({grades.length})
+                    </CardTitle>
+                    {companyId && <AddGradeDialog companyId={companyId} onCreated={load} />}
+                  </div>
                 </CardHeader>
                 <CardContent>
                   {grades.length === 0 ? (
                     <p className="text-sm text-muted-foreground">
-                      No grades submitted yet. Contact MateriaLink to add your first grade.
+                      No grades submitted yet — use "Add grade" to submit your first for review.
                     </p>
                   ) : (
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-3">

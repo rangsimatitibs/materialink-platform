@@ -1,99 +1,105 @@
 
-# Phase 1 — Database Schema + Role System
+# Phase 4 — Data ingestion & storage strategy
 
-Scope: build the full backend data model and role/access foundation for the new platform. No UI, no page routes, no styling changes. Home page and existing styling/fonts stay exactly as they are. Admin will later manage content through this schema; UI comes in Phase 2.
+The schema and CRUD already exist. This phase adds the **workflows and infrastructure** that populate three data domains: general materials, supplier grades, and company/producer profiles.
 
-## Roles
+## 1. Data-authoring pipeline
 
-Collapse `app_role` enum to: `free`, `researcher`, `industrial_premium`, `producer`, `admin`.
+Every material entry passes through the same funnel, ordered by data quality:
 
-- Existing `admin` rows in `user_roles` are preserved.
-- Any other role rows are remapped to `free` before the enum swap (safe default; no admins affected).
-- Enum swap is done via a new enum + column cast + drop old, so the change is atomic.
-- `has_role(_user_id, _role)` stays as-is (still `SECURITY DEFINER`, still used by RLS).
-- New helper functions:
-  - `is_premium(uid)` → true for `industrial_premium` or `admin`
-  - `is_paid(uid)` → true for `researcher`, `industrial_premium`, `admin`
-  - `is_producer(uid)` → true for `producer` or `admin`
-  Each `STABLE SECURITY DEFINER` with `search_path=public`.
+```text
+  Admin manual entry ──┐
+                       ├──► ai_material_drafts (pending)
+  External DB import ──┤            │
+                       │            ▼ admin review
+  Lovable AI fill  ────┘   general_materials + child tables
+                                    │
+                                    ▼
+                              status = 'published'
+```
 
-## Tables (all in `public`)
+- **Draft table stays authoritative.** Nothing writes directly to `general_materials` from an automated source. `ai_material_drafts.generated_payload` (JSONB) holds the proposed values + citations, admin approves, apply-function copies fields into the canonical tables.
+- **Source attribution.** Every property/regulation/certification row already has `source_id`. New rows added by external importers or AI must reference a row in `sources` (name, url, type).
 
-Every table below gets: standard `id uuid PK`, `created_at`, `updated_at` with trigger, RLS enabled, and explicit GRANTs.
+## 2. External database connectors (edge functions)
 
-### Identity / org
-- `profiles` — 1:1 with `auth.users`, holds `full_name`, `company_id` (nullable), `account_type` (mirrors primary role for quick reads). Auto-created via `handle_new_user` trigger on `auth.users`.
-- `companies` — `company_name`, `slug`, `logo_url`, `country`, `website`, `description`, `company_type` (`producer` | `buyer` | `other`), `sustainability_focus`, `verified_status` (`pending`|`approved`|`rejected`).
+Three edge functions, each hit only by admin actions from the CRUD UI:
 
-### Taxonomy (admin-managed lookups)
-- `material_categories` (name, slug, parent_id nullable for subcategories)
-- `applications` (name, industry, description)
-- `regulations` (name, region, description)
-- `certifications` (name, issuing_body, region, description)
-- `sources` (source_type, title, url, doi, organization, publication_year, notes)
+| Function | Provider | Trigger | Writes to |
+|---|---|---|---|
+| `fetch-materials-project` | Materials Project (`MATERIALS_PROJECT_API_KEY`) | Admin "Import from Materials Project" on a material | `ai_material_drafts` |
+| `fetch-pubchem` | PubChem REST (no key) | Admin "Import from PubChem" | `ai_material_drafts` |
+| `fetch-regulations` | ECHA / CAMEO public JSON | Admin "Fetch regulations" on a material | `ai_material_drafts` (as regulation payload) |
 
-### General materials layer
-- `general_materials` — name, slug, short_description, category_id, chemical_formula, chemical_structure_url, sustainability_summary, end_of_life_summary, production_scale_maturity, data_confidence (`high`|`medium`|`low`|`ai_assisted`|`literature`|`supplier_reported`), status (`draft`|`published`).
-- `general_material_synonyms` — material_id, synonym.
-- `general_material_tags` — material_id, tag.
+Each function:
+- Accepts `{ general_material_id, query }`.
+- Returns a normalised payload `{ properties[], regulations[], sources[], meta }`.
+- Persists that payload as a new `ai_material_drafts` row with `model='external:<provider>'`, `status='pending'`.
 
-### Supplier / producer layer
-- `supplier_material_grades` — general_material_id, company_id, grade_name, description, production_scale, availability_type (`wholesale`|`on_demand`|`pilot`|`industrial`), moq, country_of_production, uniqueness, datasheet_url, verified_status, premium_visibility (bool), status (`draft`|`pending_review`|`approved`|`rejected`).
+## 3. Lovable AI fill
 
-### Polymorphic property/relation tables
-Use `owner_type` (`general_material`|`supplier_grade`) + `owner_id` to serve both layers from one table (as your plan specified).
+Two entry points, both admin-gated:
 
-- `material_properties` — property_name, value_min, value_max, exact_value, unit, test_standard, source_id, confidence_level.
-- `material_applications` — application_id.
-- `material_regulations` — regulation_id, status, evidence_url, notes.
-- `material_certifications` — certification_id, status, document_url, expiry_date.
-- `sustainability_indicators` — bio_based_content, recycled_content, carbon_footprint_value, carbon_footprint_unit, lca_available, epd_available, carbon_credits, notes.
+- **Manual, per-material** — Admin clicks *Draft with AI* on a `general_materials` row. `ai-draft-material` edge function calls Lovable AI Gateway (`google/gemini-3-flash-preview`) with a structured-output schema mirroring `general_materials` + `material_properties` + `sustainability_indicators`. Result goes into `ai_material_drafts`.
+- **Auto on request** — When a user inserts into `material_requests`, a Postgres trigger inserts a `pending` `ai_material_drafts` row with the material name + user context. A cron job (pg_cron, every 5 min) picks up pending rows tagged `auto=true` and invokes the same edge function via `net.http_post`. Result stays as a draft until admin publishes.
 
-### User workflows
-- `saved_materials` — user_id, owner_type, owner_id.
-- `material_comparisons` — user_id, name, items jsonb.
-- `introduction_requests` — user_id, supplier_grade_id, company_id, application, quantity, timeline, message, status (`submitted`|`reviewing`|`introduced`|`in_discussion`|`closed_won`|`closed_lost`), deal_value, success_fee_status.
-- `material_edit_reports` — reporter_user_id, owner_type, owner_id, reason, details, status.
-- `material_requests` — user_id, description, application, notes, status (for "can't find it" submissions).
+Admin toggle: a new `general_materials.auto_ai_enabled boolean default true` column lets admin disable auto-drafting per material.
 
-### AI fill-in cache
-- `ai_material_drafts` — general_material_id nullable, prompt, generated_payload jsonb, model, reviewed_by, status (`pending`|`approved`|`rejected`). Used later when admin triggers Lovable AI to draft a missing profile.
+### Draft review UI (admin only)
+New page `/admin/drafts` lists pending `ai_material_drafts`, shows the diff between current material record and proposed payload, and offers:
+- **Apply** → RPC `apply_material_draft(draft_id)` merges payload into canonical tables inside a single transaction, sets draft `status='applied'`.
+- **Reject** → sets `status='rejected'` with reviewer note.
 
-## RLS policy summary (plain English)
+## 4. Supplier grade authoring
 
-- **profiles**: user can read/update their own row; admins can read/update all.
-- **companies**: producers can read/update their own company; premium + admin can read approved companies; public/free users cannot read.
-- **Taxonomy tables** (categories, applications, regulations, certifications, sources): everyone authenticated can read; only admins can write.
-- **general_materials + synonyms + tags**: any authenticated user (free and up) can read `status='published'`; admins write. Public visitors (anon) get no read access — matches "must create account to see database".
-- **supplier_material_grades + linked polymorphic rows scoped to a supplier_grade**: readable only by `industrial_premium` and `admin`. Producers can read/write their own company's grades (draft/pending). No visibility to free/researcher — enforced at the row level, so non-premium users literally cannot fetch supplier rows.
-- **Polymorphic tables** (`material_properties`, `material_applications`, `material_regulations`, `material_certifications`, `sustainability_indicators`): a row is readable if the underlying owner row is readable. Enforced via `EXISTS` subqueries against `general_materials` or `supplier_material_grades` combined with role checks.
-- **saved_materials, material_comparisons, material_requests, material_edit_reports**: owner-only (`user_id = auth.uid()`); admins can read all.
-- **introduction_requests**: buyer sees their own; producer sees requests for their company's grades; admin sees all.
-- **ai_material_drafts**: admin-only.
+Producers are the primary authors of grade data.
 
-## GRANTs
+- Company row is **admin-provisioned** (per your earlier decision). Admin CRUD already covers `companies` and `profiles.company_id` linkage.
+- Producers use `/app/producer` (already built) plus a new *Add grade* form that writes to `supplier_material_grades` with `status='draft'`.
+- Admin queue at `/admin/grade-approvals` shows `status='pending'` grades; approve → `status='approved'` (RLS then exposes to premium buyers). This uses the existing table, no schema change beyond adding a `submitted_at` and `reviewer_notes` column.
+- Grade child data (properties, sustainability, certifications) uses the same polymorphic tables with `owner_type='supplier_grade'`. Producers can write to their own via existing `can_write_owner` function.
 
-Every public table gets the correct grants in the same migration as `CREATE TABLE`. Default pattern:
+## 5. Company / producer profile authoring
 
-- `GRANT SELECT, INSERT, UPDATE, DELETE ON public.<table> TO authenticated;`
-- `GRANT ALL ON public.<table> TO service_role;`
-- `anon` is granted `SELECT` only on nothing here — the platform is fully gated (no public reads of any content table).
+- `companies` is edited by admins in `/admin/companies` (already).
+- Producers get an *Edit company profile* form on `/app/producer` that hits an RPC `update_own_company` (SECURITY DEFINER, checks `profiles.company_id = _company_id AND is_producer(auth.uid())`) — this avoids needing a broad UPDATE policy on `companies` for producers.
+- Verification remains admin-only (`verified_status` is not editable by producers).
 
-## Frontend impact this phase
+## 6. File storage
 
-Minimal, non-visual only:
-- Regenerated `src/integrations/supabase/types.ts` (auto).
-- `AuthContext` gains a `role` field alongside `isAdmin` so future gating code can read it. No UI changes, no route changes, no style changes.
-- Admin dashboard/waitlist page untouched.
+Three new buckets via `storage_create_bucket`:
 
-## Out of scope (Phase 2+)
+| Bucket | Public | Path convention | Read | Write |
+|---|---|---|---|---|
+| `datasheets` | private | `<company_id>/<grade_id>/<filename>` | admin + premium + owning producer | admin + owning producer |
+| `company-logos` | public | `<company_id>/logo.<ext>` | anyone (used on premium supplier cards) | admin + owning producer |
+| `lca-reports` | private | `<owner_type>/<owner_id>/<filename>` | admin + premium | admin + producer if owner is their grade |
 
-- All new admin CRUD pages (materials, categories, companies, supplier grades, approvals).
-- Authenticated dashboard, search, material profile pages, supplier layer UI, compare, saved library.
-- Producer dashboard, introduction request workflow UI.
-- External DB linking + Lovable AI fill-in edge function (schema is ready for it via `ai_material_drafts` + `sources`).
-- Pricing / paywall wiring; per current memory rule, upgrade CTAs will continue to route to the early-access waitlist when UI is built.
+RLS on `storage.objects` uses `split_part(name, '/', 1)::uuid = profiles.company_id` for producer writes, and `is_premium(auth.uid())` for premium reads on the private buckets.
 
-## Deliverable
+`supplier_material_grades.datasheet_url` and `companies.logo_url` continue to store the public/signed URL string; upload UI writes into the bucket then updates the URL column.
 
-One Supabase migration containing: enum change, all tables, indexes on FKs + slugs, `updated_at` triggers, RLS enable + policies, GRANTs, helper role functions, `handle_new_user` trigger for `profiles`. Plus a tiny non-visual `AuthContext` update to expose the current role.
+## 7. Schema deltas required
+
+One migration:
+
+- `general_materials`: add `auto_ai_enabled boolean not null default true`.
+- `supplier_material_grades`: add `submitted_at timestamptz`, `reviewer_notes text`.
+- `ai_material_drafts`: add `source text` (values: `admin`, `materials_project`, `pubchem`, `echa`, `ai`, `auto_ai`), `applied_at timestamptz`, `reviewer_notes text`.
+- New RPCs: `apply_material_draft(draft_id uuid)`, `update_own_company(...)`.
+- New trigger: `material_requests_after_insert` → seed `ai_material_drafts` row with `source='auto_ai'`.
+- New cron: `process-pending-ai-drafts` every 5 min invoking `ai-draft-material` edge function.
+
+## 8. Build order
+
+1. Migration (schema deltas + RPCs + trigger).
+2. Storage buckets + RLS.
+3. Edge functions: `ai-draft-material`, `fetch-materials-project`, `fetch-pubchem`, `fetch-regulations`, `apply-material-draft` (thin wrapper if we prefer RPC via client).
+4. Admin UI: `/admin/drafts` review page, "Draft with AI" / "Import from…" buttons on material form.
+5. Admin UI: `/admin/grade-approvals` queue.
+6. Producer UI: Add-grade form + company-profile edit + logo/datasheet upload widgets on `/app/producer`.
+7. pg_cron job (via `supabase--insert`, not migration, since it embeds the anon key).
+
+## Open item to confirm before build
+
+Auto-drafting on every `material_requests` insert will consume Lovable AI credits per user request. Confirm you want it on by default; if not, we flip the trigger to only enqueue the draft without invoking AI, and admin manually runs the AI step.

@@ -549,10 +549,14 @@ export const ADMIN_NAV: {
     items: [
       { slug: "companies", label: "Companies" },
       { slug: "grades", label: "Supplier Grades" },
+      { slug: "grade-approvals", label: "Grade Approvals" },
     ],
   },
   {
     section: "System",
-    items: [{ slug: "ai-drafts", label: "AI Drafts" }],
+    items: [
+      { slug: "drafts", label: "Drafts Review" },
+      { slug: "ai-drafts", label: "AI Drafts (raw)" },
+    ],
   },
 ];
