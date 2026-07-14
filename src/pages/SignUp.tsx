@@ -175,10 +175,9 @@ const SignUp = () => {
                       <SelectValue placeholder="Select an interest" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="material-scouting">Material Scouting</SelectItem>
-                      <SelectItem value="researchers-tool">Researcher's Tool</SelectItem>
-                      
-                      <SelectItem value="all-services">All of the above</SelectItem>
+                      <SelectItem value="sustainability-intelligence">Material Sustainability Intelligence</SelectItem>
+                      <SelectItem value="lca-epd">LCA / EPD workflows</SelectItem>
+                      <SelectItem value="other">Other</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
