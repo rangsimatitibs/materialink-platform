@@ -343,6 +343,8 @@ export default function MaterialProfile() {
               </CardContent>
             </Card>
           )}
+
+          <SupplierGradesSection generalMaterialId={material.id} />
         </div>
       </main>
       <Footer />
