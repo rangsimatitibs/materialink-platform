@@ -48,7 +48,7 @@ const getMonthKey = () => {
 };
 
 export const useSubscription = (): UseSubscriptionReturn => {
-  const { user } = useAuth();
+  const { user, isAdmin } = useAuth();
   const [subscription, setSubscription] = useState<Subscription | null>(null);
   const [dailyUsage, setDailyUsage] = useState<DailyUsage | null>(null);
   const [monthlyUsage, setMonthlyUsage] = useState<MonthlyUsage | null>(null);
@@ -131,12 +131,13 @@ export const useSubscription = (): UseSubscriptionReturn => {
     fetchSubscription();
   }, [user]);
 
-  const tier: SubscriptionTier = subscription?.tier || 'free';
+  const tier: SubscriptionTier = isAdmin ? 'industry_premium' : (subscription?.tier || 'free');
   
   const isLiteTier = tier === 'researcher_lite' || tier === 'industry_lite';
   const isPremiumTier = tier === 'researcher_premium' || tier === 'industry_premium';
 
   const hasFeatureAccess = (requiredTier: SubscriptionTier): boolean => {
+    if (isAdmin) return true;
     const tierHierarchy: Record<SubscriptionTier, SubscriptionTier[]> = {
       'free': ['free', 'researcher_lite', 'researcher_premium', 'industry_lite', 'industry_premium'],
       'researcher_lite': ['researcher_lite', 'researcher_premium', 'industry_lite', 'industry_premium'],
