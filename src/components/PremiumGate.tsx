@@ -2,6 +2,7 @@ import { Lock, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Link } from "react-router-dom";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface PremiumGateProps {
   title: string;
@@ -10,6 +11,8 @@ interface PremiumGateProps {
 }
 
 const PremiumGate = ({ title, description, children }: PremiumGateProps) => {
+  const { isAdmin } = useAuth();
+  if (isAdmin && children) return <>{children}</>;
   return (
     <div className="relative">
       {/* Blurred background content */}
