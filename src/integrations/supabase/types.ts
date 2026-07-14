@@ -995,6 +995,7 @@ export type Database = {
       is_paid: { Args: { _uid: string }; Returns: boolean }
       is_premium: { Args: { _uid: string }; Returns: boolean }
       is_producer: { Args: { _uid: string }; Returns: boolean }
+      storage_path_company: { Args: { _name: string }; Returns: string }
       update_own_company: {
         Args: {
           _company_id: string
