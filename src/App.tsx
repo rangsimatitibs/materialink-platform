@@ -13,6 +13,8 @@ import AdminLayout from "./pages/admin/AdminLayout";
 import Dashboard from "./pages/admin/Dashboard";
 import WaitlistAdmin from "./pages/admin/WaitlistAdmin";
 import CrudResourcePage from "./pages/admin/CrudResourcePage";
+import DraftsReview from "./pages/admin/DraftsReview";
+import GradeApprovals from "./pages/admin/GradeApprovals";
 import PlatformDashboard from "./pages/app/PlatformDashboard";
 import Search from "./pages/app/Search";
 import MaterialProfile from "./pages/app/MaterialProfile";
@@ -46,6 +48,8 @@ const App = () => (
             <Route path="/admin" element={<ProtectedRoute requireAdmin><AdminLayout /></ProtectedRoute>}>
               <Route index element={<Dashboard />} />
               <Route path="waitlist" element={<WaitlistAdmin />} />
+              <Route path="drafts" element={<DraftsReview />} />
+              <Route path="grade-approvals" element={<GradeApprovals />} />
               <Route path=":resource" element={<CrudResourcePage />} />
             </Route>
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
