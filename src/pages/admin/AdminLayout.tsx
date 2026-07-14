@@ -1,21 +1,9 @@
 import { Link, Outlet, useLocation } from "react-router-dom";
-import { Database, Beaker, Package, FileText, LayoutDashboard, LogOut, Server, Globe, Ban, Users } from "lucide-react";
+import { LayoutDashboard, LogOut, Users } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
-
-const yourDataNavigation = [
-  { name: "Materials", href: "/admin/materials", icon: Database },
-  { name: "Suppliers", href: "/admin/suppliers", icon: Package },
-  { name: "Research Materials", href: "/admin/research-materials", icon: Beaker },
-  { name: "Lab Recipes", href: "/admin/lab-recipes", icon: FileText },
-];
-
-const externalSourcesNavigation = [
-  { name: "Manage Sources", href: "/admin/external-sources", icon: Globe },
-  { name: "Excluded Terms", href: "/admin/excluded-terms", icon: Ban },
-];
 
 const userManagementNavigation = [
   { name: "Waitlist Signups", href: "/admin/waitlist", icon: Users },
@@ -49,70 +37,6 @@ export default function AdminLayout() {
               <LayoutDashboard className="h-5 w-5" />
               Dashboard
             </Link>
-          </div>
-
-          <Separator />
-
-          {/* Your Data Section */}
-          <div>
-            <div className="flex items-center gap-2 px-3 mb-2">
-              <Server className="h-4 w-4 text-primary" />
-              <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-                Your Data
-              </span>
-            </div>
-            <div className="space-y-1">
-              {yourDataNavigation.map((item) => {
-                const isActive = location.pathname === item.href;
-                return (
-                  <Link
-                    key={item.name}
-                    to={item.href}
-                    className={cn(
-                      "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
-                      isActive
-                        ? "bg-primary text-primary-foreground"
-                        : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                    )}
-                  >
-                    <item.icon className="h-5 w-5" />
-                    {item.name}
-                  </Link>
-                );
-              })}
-            </div>
-          </div>
-
-          <Separator />
-
-          {/* External Sources Section */}
-          <div>
-            <div className="flex items-center gap-2 px-3 mb-2">
-              <Globe className="h-4 w-4 text-accent" />
-              <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
-                External Sources
-              </span>
-            </div>
-            <div className="space-y-1">
-              {externalSourcesNavigation.map((item) => {
-                const isActive = location.pathname === item.href;
-                return (
-                  <Link
-                    key={item.name}
-                    to={item.href}
-                    className={cn(
-                      "flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
-                      isActive
-                        ? "bg-primary text-primary-foreground"
-                        : "text-muted-foreground hover:bg-muted hover:text-foreground"
-                    )}
-                  >
-                    <item.icon className="h-5 w-5" />
-                    {item.name}
-                  </Link>
-                );
-              })}
-            </div>
           </div>
 
           <Separator />
