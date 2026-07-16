@@ -31,6 +31,34 @@ import {
 import SupplierGradesSection from "@/components/app/SupplierGradesSection";
 import { useAuth } from "@/contexts/AuthContext";
 
+type TagToken =
+  | "material"
+  | "source"
+  | "application"
+  | "regulation"
+  | "physical"
+  | "mechanical"
+  | "safety"
+  | "sustainability"
+  | "ai"
+  | "local"
+  | "neutral";
+
+function tagStyle(token: TagToken, opacity = 0.15): React.CSSProperties {
+  if (token === "neutral") {
+    return {
+      backgroundColor: "hsl(var(--muted))",
+      color: "hsl(var(--muted-foreground))",
+      borderColor: "transparent",
+    };
+  }
+  return {
+    backgroundColor: `hsl(var(--tag-${token}) / ${opacity})`,
+    color: `hsl(var(--tag-${token}))`,
+    borderColor: `hsl(var(--tag-${token}) / 0.25)`,
+  };
+}
+
 type Material = {
   id: string;
   name: string;
