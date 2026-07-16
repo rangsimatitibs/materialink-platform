@@ -31,6 +31,34 @@ import {
 import SupplierGradesSection from "@/components/app/SupplierGradesSection";
 import { useAuth } from "@/contexts/AuthContext";
 
+type TagToken =
+  | "material"
+  | "source"
+  | "application"
+  | "regulation"
+  | "physical"
+  | "mechanical"
+  | "safety"
+  | "sustainability"
+  | "ai"
+  | "local"
+  | "neutral";
+
+function tagStyle(token: TagToken, opacity = 0.15): React.CSSProperties {
+  if (token === "neutral") {
+    return {
+      backgroundColor: "hsl(var(--muted))",
+      color: "hsl(var(--muted-foreground))",
+      borderColor: "transparent",
+    };
+  }
+  return {
+    backgroundColor: `hsl(var(--tag-${token}) / ${opacity})`,
+    color: `hsl(var(--tag-${token}))`,
+    borderColor: `hsl(var(--tag-${token}) / 0.25)`,
+  };
+}
+
 type Material = {
   id: string;
   name: string;
@@ -288,13 +316,13 @@ export default function MaterialProfile() {
             <TabsList className="bg-transparent p-0 gap-2 h-auto">
               <TabsTrigger
                 value="properties"
-                className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border px-5 py-2"
+                className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:border-primary bg-card rounded-full border px-5 py-2"
               >
                 Material Properties
               </TabsTrigger>
               <TabsTrigger
                 value="suppliers"
-                className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground rounded-full border px-5 py-2 gap-2"
+                className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:border-primary bg-card rounded-full border px-5 py-2 gap-2"
                 disabled={!isPremium}
               >
                 <Factory className="h-4 w-4" />
@@ -366,18 +394,24 @@ function MaterialHeaderCard({
               <h1 className="font-display text-3xl md:text-4xl tracking-tight text-foreground">
                 {material.name}
               </h1>
-              <Badge className="rounded-full bg-orange-500/15 text-orange-600 border-transparent hover:bg-orange-500/20">
+              <Badge
+                className="rounded-full border font-medium"
+                style={tagStyle("material", 0.15)}
+              >
                 Material
               </Badge>
             </div>
             {synonyms.length > 0 && (
               <p className="text-sm text-muted-foreground">
-                <span className="font-medium text-foreground/80">Also known as:</span>{" "}
+                <span className="text-[0.7rem] uppercase tracking-[0.14em] font-medium text-foreground/70">
+                  Also known as
+                </span>
+                <span className="mx-2 text-muted-foreground/60">·</span>
                 {synonyms.join(", ")}
               </p>
             )}
             {material.chemical_formula && (
-              <div className="inline-flex items-center gap-2 border rounded-lg px-3 py-1.5 text-sm">
+              <div className="inline-flex items-center gap-2 border rounded-full px-3 py-1.5 text-sm bg-card">
                 <Atom className="h-4 w-4 text-primary" />
                 <span className="text-muted-foreground">Formula:</span>{" "}
                 <Formula formula={material.chemical_formula} />
@@ -386,7 +420,9 @@ function MaterialHeaderCard({
           </div>
           {sustainabilityScore !== null && (
             <div className="text-right shrink-0">
-              <p className="text-sm text-muted-foreground">Sustainability</p>
+              <p className="text-[0.7rem] uppercase tracking-[0.14em] text-muted-foreground">
+                Sustainability
+              </p>
               <p className="font-display text-4xl md:text-5xl text-primary font-semibold">
                 {sustainabilityScore}%
               </p>
@@ -398,13 +434,16 @@ function MaterialHeaderCard({
           <div className="space-y-4 pt-2">
             {tags.length > 0 && (
               <div>
-                <p className="font-medium text-sm mb-2">Sources:</p>
+                <p className="text-[0.7rem] uppercase tracking-[0.14em] font-medium text-foreground/70 mb-2">
+                  Sources
+                </p>
                 <div className="flex flex-wrap gap-2">
                   {tags.map((t) => (
                     <Badge
                       key={t}
                       variant="outline"
-                      className="rounded-full border-primary/40 text-primary bg-primary/5 gap-1"
+                      className="rounded-full border gap-1"
+                      style={tagStyle("source", 0.12)}
                     >
                       <Leaf className="h-3 w-3" /> {t}
                     </Badge>
@@ -416,13 +455,16 @@ function MaterialHeaderCard({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {applications.length > 0 && (
                 <div>
-                  <p className="font-medium text-sm mb-2">Applications:</p>
+                  <p className="text-[0.7rem] uppercase tracking-[0.14em] font-medium text-foreground/70 mb-2">
+                    Applications
+                  </p>
                   <div className="flex flex-wrap gap-2">
                     {applications.map((a) => (
                       <Badge
                         key={a.id}
-                        variant="secondary"
-                        className="rounded-full bg-primary/10 text-primary hover:bg-primary/15"
+                        variant="outline"
+                        className="rounded-full border"
+                        style={tagStyle("application", 0.14)}
                       >
                         {a.name}
                       </Badge>
@@ -433,15 +475,18 @@ function MaterialHeaderCard({
 
               {(regulations.length > 0 || certifications.length > 0) && (
                 <div>
-                  <p className="font-medium text-sm mb-2">Regulations:</p>
+                  <p className="text-[0.7rem] uppercase tracking-[0.14em] font-medium text-foreground/70 mb-2">
+                    Regulations
+                  </p>
                   <div className="flex flex-wrap gap-2">
                     {[...regulations, ...certifications].map((r) => (
                       <Badge
                         key={r.id}
                         variant="outline"
-                        className="rounded-full gap-1"
+                        className="rounded-full border gap-1"
+                        style={tagStyle("regulation", 0.14)}
                       >
-                        <Award className="h-3 w-3 text-primary" /> {r.name}
+                        <Award className="h-3 w-3" /> {r.name}
                       </Badge>
                     ))}
                   </div>
@@ -514,7 +559,7 @@ function MaterialPropertiesView({
 
         <Accordion type="multiple" defaultValue={defaultOpen} className="space-y-3">
           {hasDescription && (
-            <PropertyGroup id="description" icon={<FileText className="h-4 w-4 text-primary" />} title="Description" count={1}>
+            <PropertyGroup id="description" icon={<FileText className="h-4 w-4" />} title="Description" count={1} token="neutral">
               <div className="border rounded-lg p-4 space-y-3 bg-card">
                 <div className="flex items-start justify-between gap-2">
                   <p className="text-sm text-muted-foreground">Description</p>
@@ -545,34 +590,34 @@ function MaterialPropertiesView({
           )}
 
           {physical.length > 0 && (
-            <PropertyGroup id="physical" icon={<FlaskConical className="h-4 w-4 text-primary" />} title="Physical Properties" count={physical.length}>
+            <PropertyGroup id="physical" icon={<FlaskConical className="h-4 w-4" />} title="Physical Properties" count={physical.length} token="physical">
               <PropertyGrid items={physical} />
             </PropertyGroup>
           )}
 
           {mechanical.length > 0 && (
-            <PropertyGroup id="mechanical" icon={<Wrench className="h-4 w-4 text-primary" />} title="Mechanical Properties" count={mechanical.length}>
+            <PropertyGroup id="mechanical" icon={<Wrench className="h-4 w-4" />} title="Mechanical Properties" count={mechanical.length} token="mechanical">
               <PropertyGrid items={mechanical} />
             </PropertyGroup>
           )}
 
           {safety.length > 0 && (
-            <PropertyGroup id="safety" icon={<ShieldAlert className="h-4 w-4 text-primary" />} title="Safety & Hazards" count={safety.length}>
+            <PropertyGroup id="safety" icon={<ShieldAlert className="h-4 w-4" />} title="Safety & Hazards" count={safety.length} token="safety">
               <PropertyGrid items={safety} />
             </PropertyGroup>
           )}
 
           {other.length > 0 && (
-            <PropertyGroup id="other" icon={<Sparkles className="h-4 w-4 text-primary" />} title="Other Properties" count={other.length}>
+            <PropertyGroup id="other" icon={<Sparkles className="h-4 w-4" />} title="Other Properties" count={other.length} token="neutral">
               <PropertyGrid items={other} />
             </PropertyGroup>
           )}
 
           {sustainability && (
-            <PropertyGroup id="sustainability" icon={<Leaf className="h-4 w-4 text-primary" />} title="Sustainability" count={
+            <PropertyGroup id="sustainability" icon={<Leaf className="h-4 w-4" />} title="Sustainability" count={
               [sustainability.bio_based_content, sustainability.recycled_content, sustainability.carbon_footprint_value].filter((v) => v !== null && v !== undefined).length
               + (sustainability.lca_available ? 1 : 0) + (sustainability.epd_available ? 1 : 0)
-            }>
+            } token="sustainability">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {sustainability.bio_based_content !== null && (
                   <PropertyCard name="Bio-based content" value={`${sustainability.bio_based_content}%`} source="local" />
@@ -607,23 +652,31 @@ function PropertyGroup({
   icon,
   title,
   count,
+  token,
   children,
 }: {
   id: string;
   icon: React.ReactNode;
   title: string;
   count: number;
+  token: TagToken;
   children: React.ReactNode;
 }) {
   return (
     <AccordionItem value={id} className="border rounded-lg px-4">
       <AccordionTrigger className="hover:no-underline py-3">
         <div className="flex items-center gap-3">
-          <span className="inline-flex items-center justify-center w-8 h-8 rounded-md bg-primary/10">
+          <span
+            className="inline-flex items-center justify-center w-8 h-8 rounded-md border"
+            style={tagStyle(token, 0.14)}
+          >
             {icon}
           </span>
-          <span className="font-semibold">{title}</span>
-          <Badge className="rounded-full bg-orange-500/15 text-orange-600 border-transparent hover:bg-orange-500/20">
+          <span className="font-display text-lg">{title}</span>
+          <Badge
+            className="rounded-full border font-medium"
+            style={tagStyle(token, 0.16)}
+          >
             {count}
           </Badge>
         </div>
@@ -677,7 +730,8 @@ function SourceBadge({ kind }: { kind: "local" | "ai" }) {
     return (
       <Badge
         variant="outline"
-        className="rounded-full gap-1 border-orange-400/40 text-orange-600 bg-orange-500/10"
+        className="rounded-full border gap-1"
+        style={tagStyle("ai", 0.14)}
       >
         <Sparkles className="h-3 w-3" /> AI Generated
       </Badge>
@@ -686,7 +740,8 @@ function SourceBadge({ kind }: { kind: "local" | "ai" }) {
   return (
     <Badge
       variant="outline"
-      className="rounded-full gap-1 border-primary/40 text-primary bg-primary/10"
+      className="rounded-full border gap-1"
+      style={tagStyle("local", 0.14)}
     >
       <Database className="h-3 w-3" /> Local
     </Badge>

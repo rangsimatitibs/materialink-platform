@@ -1,105 +1,70 @@
+## Goal
+Retheme the material profile output page (`/app/materials/:slug`) so it matches the warm cream + forest green aesthetic already used on the Materials database page, replacing the current orange/hardcoded chips with a coherent, semantic palette. Introduce a small set of colorful category tags so material properties, applications, and regulations are easy to scan at a glance.
 
-# Phase 4 — Data ingestion & storage strategy
+## Design language (locked to existing site tokens)
+- Background: warm cream `--background` (already `45 30% 96%`).
+- Headings: Playfair Display serif (already global) — apply to material name and section titles.
+- Primary accent: deep forest green `--primary` for main actions and formula chip.
+- Sustainability score: forest green numeric, cream label.
+- Cards: `--card` with hairline `--border`, subtle `--shadow-medium` on the hero card.
+- No hardcoded `bg-orange-*`, `text-white`, or Tailwind color literals anywhere on the page.
 
-The schema and CRUD already exist. This phase adds the **workflows and infrastructure** that populate three data domains: general materials, supplier grades, and company/producer profiles.
-
-## 1. Data-authoring pipeline
-
-Every material entry passes through the same funnel, ordered by data quality:
+## Category tag palette (new semantic tokens in `src/index.css`)
+Add a small set of soft, warm-cream compatible chip tokens (background + foreground pair for each), used across the profile:
 
 ```text
-  Admin manual entry ──┐
-                       ├──► ai_material_drafts (pending)
-  External DB import ──┤            │
-                       │            ▼ admin review
-  Lovable AI fill  ────┘   general_materials + child tables
-                                    │
-                                    ▼
-                              status = 'published'
+--tag-material     — forest green pill (identity chip beside the name)
+--tag-source       — sage / leaf green (feedstock/tag chips)
+--tag-application  — moss / soft olive (application chips)
+--tag-regulation   — clay / amber (regulation & certification chips)
+--tag-physical     — sky teal (physical properties group)
+--tag-mechanical   — terracotta (mechanical properties group)
+--tag-safety       — muted red-clay (safety & hazards group)
+--tag-sustainability — leaf green (sustainability group)
+--tag-ai           — warm ochre (AI Generated source badge)
+--tag-local        — deep sage (Local / database source badge)
 ```
 
-- **Draft table stays authoritative.** Nothing writes directly to `general_materials` from an automated source. `ai_material_drafts.generated_payload` (JSONB) holds the proposed values + citations, admin approves, apply-function copies fields into the canonical tables.
-- **Source attribution.** Every property/regulation/certification row already has `source_id`. New rows added by external importers or AI must reference a row in `sources` (name, url, type).
+Each rendered as a rounded-full pill with `bg-[hsl(var(--tag-x)/0.15)]` and `text-[hsl(var(--tag-x))]`, tuned to sit calmly on the cream canvas.
 
-## 2. External database connectors (edge functions)
+## Page structure changes (`src/pages/app/MaterialProfile.tsx`)
+No structural rewrite — keep the header card + tabs + accordion layout added last turn. Only restyle:
 
-Three edge functions, each hit only by admin actions from the CRUD UI:
+1. Hero card
+   - Serif h1 for material name.
+   - "Material" chip → `--tag-material` (forest green pill).
+   - "Also known as" → small caps label + body text.
+   - Formula pill → cream card with forest-green atom icon, subscripts preserved.
+   - Sustainability block (right side) → serif numeric in `--primary`, small caps "Sustainability" label.
+   - Sources chips → leaf icon + `--tag-source` color.
+   - Applications chips → `--tag-application`.
+   - Regulations chips → award icon + `--tag-regulation`.
+   - Toggle button uses `variant="default"` (forest green) when open, `outline` when closed.
+   - "Advanced Data Sheet — Premium" locked button uses muted card style, lock icon, small serif "Premium" tag.
 
-| Function | Provider | Trigger | Writes to |
-|---|---|---|---|
-| `fetch-materials-project` | Materials Project (`MATERIALS_PROJECT_API_KEY`) | Admin "Import from Materials Project" on a material | `ai_material_drafts` |
-| `fetch-pubchem` | PubChem REST (no key) | Admin "Import from PubChem" | `ai_material_drafts` |
-| `fetch-regulations` | ECHA / CAMEO public JSON | Admin "Fetch regulations" on a material | `ai_material_drafts` (as regulation payload) |
+2. Tabs
+   - Pill tabs restyled to cream + border, active = forest green with cream text.
+   - Suppliers count chip uses `--muted` when non-premium, forest green when active.
 
-Each function:
-- Accepts `{ general_material_id, query }`.
-- Returns a normalised payload `{ properties[], regulations[], sources[], meta }`.
-- Persists that payload as a new `ai_material_drafts` row with `model='external:<provider>'`, `status='pending'`.
+3. Material Properties accordion
+   - Each group header carries its category color as a soft rounded icon square + a matching count chip (Description = neutral, Physical = teal, Mechanical = terracotta, Safety = clay-red, Sustainability = leaf-green, Other = muted).
+   - Property cards: cream card, name in muted, value in serif/semibold, source badge (`Local` or `AI Generated`) top-right using `--tag-local` / `--tag-ai`.
+   - Section title "Material Properties" set in Playfair.
 
-## 3. Lovable AI fill
+4. Search results (`src/pages/app/Search.tsx`)
+   - Confidence badge (High / Medium / Low) → colored by tier using the same tag tokens (High = leaf green, Medium = clay, Low = muted).
+   - Card hover: forest-green border + subtle shadow to match the reference screenshot.
 
-Two entry points, both admin-gated:
+## Files touched
+- `src/index.css` — add the 10 tag tokens above under `:root` and `.dark`, plus a tiny `.tag-*` utility layer or use inline `bg-[hsl(var(--tag-x)/0.15)]` classes directly in components.
+- `src/pages/app/MaterialProfile.tsx` — swap every hardcoded orange/white class for the new tokens; adjust chip colors per category; ensure serif headings.
+- `src/pages/app/Search.tsx` — restyle result cards and confidence badge to match.
 
-- **Manual, per-material** — Admin clicks *Draft with AI* on a `general_materials` row. `ai-draft-material` edge function calls Lovable AI Gateway (`google/gemini-3-flash-preview`) with a structured-output schema mirroring `general_materials` + `material_properties` + `sustainability_indicators`. Result goes into `ai_material_drafts`.
-- **Auto on request** — When a user inserts into `material_requests`, a Postgres trigger inserts a `pending` `ai_material_drafts` row with the material name + user context. A cron job (pg_cron, every 5 min) picks up pending rows tagged `auto=true` and invokes the same edge function via `net.http_post`. Result stays as a draft until admin publishes.
+## Out of scope
+- No changes to data, routing, tabs behavior, or suppliers logic.
+- No global font change (Playfair + system stack stay as-is).
+- No dark-mode redesign beyond keeping tokens defined so it still works.
 
-Admin toggle: a new `general_materials.auto_ai_enabled boolean default true` column lets admin disable auto-drafting per material.
-
-### Draft review UI (admin only)
-New page `/admin/drafts` lists pending `ai_material_drafts`, shows the diff between current material record and proposed payload, and offers:
-- **Apply** → RPC `apply_material_draft(draft_id)` merges payload into canonical tables inside a single transaction, sets draft `status='applied'`.
-- **Reject** → sets `status='rejected'` with reviewer note.
-
-## 4. Supplier grade authoring
-
-Producers are the primary authors of grade data.
-
-- Company row is **admin-provisioned** (per your earlier decision). Admin CRUD already covers `companies` and `profiles.company_id` linkage.
-- Producers use `/app/producer` (already built) plus a new *Add grade* form that writes to `supplier_material_grades` with `status='draft'`.
-- Admin queue at `/admin/grade-approvals` shows `status='pending'` grades; approve → `status='approved'` (RLS then exposes to premium buyers). This uses the existing table, no schema change beyond adding a `submitted_at` and `reviewer_notes` column.
-- Grade child data (properties, sustainability, certifications) uses the same polymorphic tables with `owner_type='supplier_grade'`. Producers can write to their own via existing `can_write_owner` function.
-
-## 5. Company / producer profile authoring
-
-- `companies` is edited by admins in `/admin/companies` (already).
-- Producers get an *Edit company profile* form on `/app/producer` that hits an RPC `update_own_company` (SECURITY DEFINER, checks `profiles.company_id = _company_id AND is_producer(auth.uid())`) — this avoids needing a broad UPDATE policy on `companies` for producers.
-- Verification remains admin-only (`verified_status` is not editable by producers).
-
-## 6. File storage
-
-Three new buckets via `storage_create_bucket`:
-
-| Bucket | Public | Path convention | Read | Write |
-|---|---|---|---|---|
-| `datasheets` | private | `<company_id>/<grade_id>/<filename>` | admin + premium + owning producer | admin + owning producer |
-| `company-logos` | public | `<company_id>/logo.<ext>` | anyone (used on premium supplier cards) | admin + owning producer |
-| `lca-reports` | private | `<owner_type>/<owner_id>/<filename>` | admin + premium | admin + producer if owner is their grade |
-
-RLS on `storage.objects` uses `split_part(name, '/', 1)::uuid = profiles.company_id` for producer writes, and `is_premium(auth.uid())` for premium reads on the private buckets.
-
-`supplier_material_grades.datasheet_url` and `companies.logo_url` continue to store the public/signed URL string; upload UI writes into the bucket then updates the URL column.
-
-## 7. Schema deltas required
-
-One migration:
-
-- `general_materials`: add `auto_ai_enabled boolean not null default true`.
-- `supplier_material_grades`: add `submitted_at timestamptz`, `reviewer_notes text`.
-- `ai_material_drafts`: add `source text` (values: `admin`, `materials_project`, `pubchem`, `echa`, `ai`, `auto_ai`), `applied_at timestamptz`, `reviewer_notes text`.
-- New RPCs: `apply_material_draft(draft_id uuid)`, `update_own_company(...)`.
-- New trigger: `material_requests_after_insert` → seed `ai_material_drafts` row with `source='auto_ai'`.
-- New cron: `process-pending-ai-drafts` every 5 min invoking `ai-draft-material` edge function.
-
-## 8. Build order
-
-1. Migration (schema deltas + RPCs + trigger).
-2. Storage buckets + RLS.
-3. Edge functions: `ai-draft-material`, `fetch-materials-project`, `fetch-pubchem`, `fetch-regulations`, `apply-material-draft` (thin wrapper if we prefer RPC via client).
-4. Admin UI: `/admin/drafts` review page, "Draft with AI" / "Import from…" buttons on material form.
-5. Admin UI: `/admin/grade-approvals` queue.
-6. Producer UI: Add-grade form + company-profile edit + logo/datasheet upload widgets on `/app/producer`.
-7. pg_cron job (via `supabase--insert`, not migration, since it embeds the anon key).
-
-## Open item to confirm before build
-
-Auto-drafting on every `material_requests` insert will consume Lovable AI credits per user request. Confirm you want it on by default; if not, we flip the trigger to only enqueue the draft without invoking AI, and admin manually runs the AI step.
+## Verification
+- Typecheck.
+- Visit `/app/materials/pla-polylactic-acid` (or any seeded material) and `/app/search` in the preview, confirm: cream background, forest-green accents, coherent colorful category chips, no orange leftovers, no `text-white` on light chips.
