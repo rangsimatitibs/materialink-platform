@@ -4,10 +4,32 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Loader2, ArrowLeft } from "lucide-react";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import {
+  Loader2,
+  ArrowLeft,
+  Atom,
+  Leaf,
+  Award,
+  Factory,
+  Lock,
+  FileText,
+  FlaskConical,
+  Wrench,
+  ShieldAlert,
+  Database,
+  Sparkles,
+} from "lucide-react";
 import SupplierGradesSection from "@/components/app/SupplierGradesSection";
+import { useAuth } from "@/contexts/AuthContext";
 
 type Material = {
   id: string;
@@ -44,8 +66,63 @@ function formatValue(p: Property) {
   return "—";
 }
 
+function Formula({ formula }: { formula: string }) {
+  // Split into runs of letters/parens vs digits so digits render as subscripts
+  const parts = formula.split(/(\d+)/g);
+  return (
+    <span className="font-mono">
+      {parts.map((p, i) =>
+        /^\d+$/.test(p) ? (
+          <sub key={i} className="text-[0.75em]">
+            {p}
+          </sub>
+        ) : (
+          <span key={i}>{p}</span>
+        )
+      )}
+    </span>
+  );
+}
+
+type Group = "physical" | "mechanical" | "safety" | "other";
+function groupOf(name: string): Group {
+  const n = name.toLowerCase();
+  if (
+    /(tensile|modulus|elong|flex|impact|hardness|shear|compress|yield|strain|stress|toughness)/.test(
+      n
+    )
+  )
+    return "mechanical";
+  if (
+    /(toxic|flamm|hazard|voc|migration|food contact|ld50|carcinog|reach|hazmat)/.test(n)
+  )
+    return "safety";
+  if (
+    /(density|melt|glass transition|boil|viscosity|biodegrad|water|moisture|thermal|expansion|conductiv|refractive|solub|mass|logp)/.test(
+      n
+    )
+  )
+    return "physical";
+  return "other";
+}
+
+function sustainabilityScore(s: {
+  bio_based_content: number | null;
+  recycled_content: number | null;
+  lca_available: boolean | null;
+  epd_available: boolean | null;
+} | null) {
+  if (!s) return null;
+  const bio = s.bio_based_content ?? 0;
+  const rec = s.recycled_content ?? 0;
+  const doc = (s.lca_available ? 10 : 0) + (s.epd_available ? 10 : 0);
+  const raw = Math.round(Math.min(100, bio * 0.5 + rec * 0.5 + doc));
+  return raw > 0 ? raw : null;
+}
+
 export default function MaterialProfile() {
   const { slug } = useParams<{ slug: string }>();
+  const { isPremium } = useAuth();
   const [material, setMaterial] = useState<Material | null>(null);
   const [loading, setLoading] = useState(true);
   const [notFound, setNotFound] = useState(false);
@@ -55,6 +132,8 @@ export default function MaterialProfile() {
   const [certifications, setCertifications] = useState<NamedLink[]>([]);
   const [synonyms, setSynonyms] = useState<string[]>([]);
   const [tags, setTags] = useState<string[]>([]);
+  const [showDetails, setShowDetails] = useState(true);
+  const [gradeCount, setGradeCount] = useState(0);
   const [sustainability, setSustainability] = useState<{
     bio_based_content: number | null;
     recycled_content: number | null;
@@ -138,6 +217,14 @@ export default function MaterialProfile() {
       setSynonyms(((syns.data as { synonym: string }[]) || []).map((r) => r.synonym));
       setTags(((tgs.data as { tag: string }[]) || []).map((r) => r.tag));
       setSustainability((sust.data as typeof sustainability) ?? null);
+
+      const { count } = await supabase
+        .from("supplier_material_grades")
+        .select("id", { count: "exact", head: true })
+        .eq("general_material_id", m.id)
+        .eq("status", "approved");
+      setGradeCount(count ?? 0);
+
       setLoading(false);
     })();
   }, [slug]);
