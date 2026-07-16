@@ -31,6 +31,7 @@ import {
   ChevronDown,
 } from "lucide-react";
 import SupplierGradesSection from "@/components/app/SupplierGradesSection";
+import MaterialHeroImage from "@/components/app/MaterialHeroImage";
 import { useAuth } from "@/contexts/AuthContext";
 
 type TagToken =
@@ -68,6 +69,7 @@ type Material = {
   short_description: string | null;
   chemical_formula: string | null;
   chemical_structure_url: string | null;
+  image_url: string | null;
   sustainability_summary: string | null;
   end_of_life_summary: string | null;
   production_scale_maturity: string | null;
@@ -300,6 +302,13 @@ export default function MaterialProfile() {
           >
             <ArrowLeft className="h-4 w-4" /> Back to search
           </Link>
+
+          <MaterialHeroImage
+            materialId={material.id}
+            materialName={material.name}
+            imageUrl={material.image_url}
+            onChange={(url) => setMaterial({ ...material, image_url: url })}
+          />
 
           <MaterialHeaderCard
             material={material}
