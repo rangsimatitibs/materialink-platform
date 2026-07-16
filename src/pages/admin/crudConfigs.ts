@@ -159,6 +159,7 @@ export const CRUD_CONFIGS: Record<string, CrudConfig> = {
       },
       { key: "chemical_formula", label: "Chemical formula", type: "text" },
       { key: "chemical_structure_url", label: "Chemical structure URL", type: "text" },
+      { key: "image_url", label: "Hero image URL", type: "text" },
       { key: "sustainability_summary", label: "Sustainability summary", type: "textarea" },
       { key: "end_of_life_summary", label: "End-of-life summary", type: "textarea" },
       { key: "production_scale_maturity", label: "Production scale maturity", type: "text" },
