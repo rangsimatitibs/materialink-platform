@@ -17,6 +17,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/hooks/use-toast";
 import { BadgeCheck, Factory, Loader2 } from "lucide-react";
+import { GradePhotosGallery } from "@/components/app/GradePhotos";
 
 type Grade = {
   id: string;
@@ -125,6 +126,7 @@ export default function SupplierGradesSection({ generalMaterialId }: { generalMa
                 {g.description && (
                   <p className="text-sm text-muted-foreground line-clamp-3">{g.description}</p>
                 )}
+                <GradePhotosGallery gradeId={g.id} />
                 <div className="flex flex-wrap gap-1 pt-1">
                   {g.country_of_production && (
                     <Badge variant="outline">{g.country_of_production}</Badge>
