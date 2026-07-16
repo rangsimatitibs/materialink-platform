@@ -53,22 +53,22 @@
 
     --radius: 1rem;
 
-    /* Cinematic gradients */
-    --gradient-primary: linear-gradient(135deg, hsl(158 45% 18%), hsl(158 50% 35%));
-    --gradient-sustainable: linear-gradient(135deg, hsl(158 45% 18%) 0%, hsl(160 35% 12%) 100%);
-    --gradient-innovation: linear-gradient(135deg, hsl(158 50% 35%), hsl(145 35% 42%));
-    --gradient-hero: radial-gradient(ellipse at top, hsl(158 50% 35% / 0.15) 0%, hsl(45 30% 96%) 60%);
-    --gradient-accent: linear-gradient(135deg, hsl(145 35% 42%), hsl(80 30% 60%));
-    --gradient-mesh: radial-gradient(at 20% 30%, hsl(158 50% 35% / 0.18) 0%, transparent 50%),
-                     radial-gradient(at 80% 70%, hsl(145 35% 42% / 0.15) 0%, transparent 50%),
-                     radial-gradient(at 50% 100%, hsl(80 30% 60% / 0.12) 0%, transparent 50%);
+    /* Bright pop gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(148 78% 45%), hsl(72 90% 60%));
+    --gradient-sustainable: linear-gradient(135deg, hsl(148 78% 45%) 0%, hsl(168 80% 50%) 100%);
+    --gradient-innovation: linear-gradient(135deg, hsl(190 85% 55%), hsl(148 78% 55%));
+    --gradient-hero: radial-gradient(ellipse at top, hsl(148 85% 60% / 0.28) 0%, hsl(60 55% 97%) 55%);
+    --gradient-accent: linear-gradient(135deg, hsl(8 92% 62%), hsl(42 95% 60%));
+    --gradient-mesh: radial-gradient(at 15% 20%, hsl(148 85% 60% / 0.35) 0%, transparent 50%),
+                     radial-gradient(at 85% 30%, hsl(42 95% 65% / 0.30) 0%, transparent 50%),
+                     radial-gradient(at 50% 100%, hsl(8 92% 68% / 0.25) 0%, transparent 55%);
 
-    /* Soft, deep shadows */
-    --shadow-sm: 0 1px 2px 0 hsl(160 25% 8% / 0.04);
-    --shadow-medium: 0 8px 24px -6px hsl(160 25% 8% / 0.12);
-    --shadow-large: 0 24px 60px -16px hsl(160 25% 8% / 0.18);
-    --shadow-glow: 0 0 80px hsl(158 50% 35% / 0.25);
-    --shadow-xl: 0 32px 64px -20px hsl(160 25% 8% / 0.22);
+    /* Punchy shadows */
+    --shadow-sm: 0 1px 2px 0 hsl(155 45% 10% / 0.06);
+    --shadow-medium: 0 10px 30px -8px hsl(148 60% 30% / 0.18);
+    --shadow-large: 0 28px 70px -20px hsl(148 60% 30% / 0.28);
+    --shadow-glow: 0 0 60px hsl(148 85% 55% / 0.45);
+    --shadow-xl: 0 40px 80px -24px hsl(148 60% 30% / 0.32);
 
     /* Cinematic transitions */
     --transition-smooth: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
