@@ -9,49 +9,49 @@
 
 @layer base {
   :root {
-    /* Canvas — warm off-white with depth */
-    --background: 45 30% 96%;
-    --foreground: 160 25% 8%;
+    /* Canvas — bright pop, warm white with lime undertone */
+    --background: 60 55% 97%;
+    --foreground: 155 45% 10%;
 
-    --card: 45 30% 98%;
-    --card-foreground: 160 25% 8%;
+    --card: 0 0% 100%;
+    --card-foreground: 155 45% 10%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 160 25% 8%;
+    --popover-foreground: 155 45% 10%;
 
-    /* Primary — deep forest, refined */
-    --primary: 158 45% 18%;
-    --primary-foreground: 45 30% 96%;
-    --primary-glow: 158 50% 35%;
+    /* Primary — vivid emerald */
+    --primary: 148 72% 42%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 148 85% 55%;
 
-    /* Secondary — soft moss */
-    --secondary: 80 15% 88%;
-    --secondary-foreground: 160 25% 8%;
+    /* Secondary — sunny lime */
+    --secondary: 72 90% 88%;
+    --secondary-foreground: 155 45% 10%;
 
-    /* Muted — warm fog */
-    --muted: 45 15% 91%;
-    --muted-foreground: 160 12% 38%;
+    /* Muted — soft cream */
+    --muted: 55 35% 93%;
+    --muted-foreground: 155 15% 35%;
 
-    /* Accent — luminous sage */
-    --accent: 145 35% 42%;
-    --accent-foreground: 45 30% 96%;
+    /* Accent — hot coral pop */
+    --accent: 8 92% 62%;
+    --accent-foreground: 0 0% 100%;
 
     /* Earth */
-    --earth: 30 30% 50%;
-    --earth-foreground: 45 30% 96%;
+    --earth: 28 90% 60%;
+    --earth-foreground: 0 0% 100%;
 
     /* Status */
-    --destructive: 0 60% 50%;
-    --destructive-foreground: 0 0% 98%;
-    --success: 145 45% 38%;
-    --success-foreground: 0 0% 98%;
+    --destructive: 350 85% 58%;
+    --destructive-foreground: 0 0% 100%;
+    --success: 148 72% 42%;
+    --success-foreground: 0 0% 100%;
 
-    /* Hairline borders */
-    --border: 45 12% 84%;
-    --input: 45 12% 84%;
-    --ring: 158 45% 18%;
+    /* Bold borders */
+    --border: 60 20% 86%;
+    --input: 60 20% 86%;
+    --ring: 148 72% 42%;
 
-    --radius: 0.75rem;
+    --radius: 1rem;
 
     /* Cinematic gradients */
     --gradient-primary: linear-gradient(135deg, hsl(158 45% 18%), hsl(158 50% 35%));
@@ -74,29 +74,29 @@
     --transition-smooth: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
     --transition-spring: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
 
-    --sidebar-background: 45 30% 96%;
-    --sidebar-foreground: 160 20% 20%;
-    --sidebar-primary: 158 45% 18%;
-    --sidebar-primary-foreground: 45 30% 96%;
-    --sidebar-accent: 45 15% 91%;
-    --sidebar-accent-foreground: 160 25% 8%;
-    --sidebar-border: 45 12% 84%;
-    --sidebar-ring: 158 45% 18%;
+    --sidebar-background: 60 55% 97%;
+    --sidebar-foreground: 155 30% 18%;
+    --sidebar-primary: 148 72% 42%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 55 35% 93%;
+    --sidebar-accent-foreground: 155 45% 10%;
+    --sidebar-border: 60 20% 86%;
+    --sidebar-ring: 148 72% 42%;
 
-    /* Category tag palette — warm cream compatible */
-    --tag-material: 22 85% 58%;
-    --tag-source: 142 55% 42%;
-    --tag-application: 165 55% 38%;
-    --tag-regulation: 165 45% 35%;
-    --tag-physical: 195 45% 35%;
-    --tag-mechanical: 15 55% 42%;
-    --tag-safety: 5 55% 45%;
-    --tag-sustainability: 145 45% 32%;
-    --tag-ai: 35 65% 40%;
-    --tag-local: 158 40% 28%;
+    /* Category tag palette — bright pop colors */
+    --tag-material: 20 95% 58%;
+    --tag-source: 148 72% 45%;
+    --tag-application: 190 85% 48%;
+    --tag-regulation: 265 75% 62%;
+    --tag-physical: 200 88% 52%;
+    --tag-mechanical: 12 90% 58%;
+    --tag-safety: 340 85% 58%;
+    --tag-sustainability: 148 72% 42%;
+    --tag-ai: 42 95% 55%;
+    --tag-local: 168 75% 42%;
 
-    /* Bright emerald CTA (matches reference "Hide Details" button) */
-    --cta-primary: 145 62% 42%;
+    /* Bright emerald CTA */
+    --cta-primary: 148 78% 45%;
     --cta-primary-foreground: 0 0% 100%;
   }
 
