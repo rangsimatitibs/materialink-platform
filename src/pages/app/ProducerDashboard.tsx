@@ -17,6 +17,7 @@ import { toast } from "@/hooks/use-toast";
 import { Loader2, Factory, Building2 } from "lucide-react";
 import AddGradeDialog from "@/components/app/AddGradeDialog";
 import EditCompanyDialog from "@/components/app/EditCompanyDialog";
+import { GradePhotosManager } from "@/components/app/GradePhotos";
 
 type Company = {
   id: string;
@@ -223,6 +224,9 @@ export default function ProducerDashboard() {
                               {g.country_of_production}
                             </p>
                           )}
+                          <div className="pt-1">
+                            <GradePhotosManager gradeId={g.id} companyId={companyId!} />
+                          </div>
                         </div>
                       ))}
                     </div>
