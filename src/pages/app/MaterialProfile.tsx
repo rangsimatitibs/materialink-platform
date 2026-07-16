@@ -506,17 +506,32 @@ function MaterialHeaderCard({
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2">
           <Button
-            variant={showDetails ? "default" : "outline"}
             onClick={onToggleDetails}
-            className="w-full"
+            className="w-full h-12 rounded-lg text-base font-semibold gap-2 border-0 hover:brightness-95 transition"
+            style={{
+              backgroundColor: "hsl(var(--cta-primary))",
+              color: "hsl(var(--cta-primary-foreground))",
+            }}
           >
+            {showDetails ? (
+              <ChevronUp className="h-5 w-5" />
+            ) : (
+              <ChevronDown className="h-5 w-5" />
+            )}
             {showDetails ? "Hide Details" : "Show Details"}
           </Button>
-          <Button variant="outline" disabled className="w-full gap-2 justify-between">
+          <Button
+            variant="outline"
+            disabled
+            className="w-full h-12 rounded-lg gap-2 justify-between bg-card"
+          >
             <span className="inline-flex items-center gap-2">
               <Lock className="h-4 w-4" /> Advanced Data Sheet
             </span>
-            <Badge variant="secondary" className="rounded-full">
+            <Badge
+              variant="secondary"
+              className="rounded-full text-[0.7rem] font-medium"
+            >
               {isPremium ? "Coming soon" : "Premium"}
             </Badge>
           </Button>
