@@ -318,13 +318,13 @@ export default function MaterialProfile() {
             <TabsList className="bg-transparent p-0 gap-2 h-auto">
               <TabsTrigger
                 value="properties"
-                className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:border-primary bg-card rounded-full border px-5 py-2"
+                className="data-[state=active]:text-white data-[state=active]:border-transparent bg-card rounded-full border px-5 py-2 data-[state=active]:[background-color:hsl(var(--cta-primary))]"
               >
                 Material Properties
               </TabsTrigger>
               <TabsTrigger
                 value="suppliers"
-                className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:border-primary bg-card rounded-full border px-5 py-2 gap-2"
+                className="data-[state=active]:text-white data-[state=active]:border-transparent bg-card rounded-full border px-5 py-2 gap-2 data-[state=active]:[background-color:hsl(var(--cta-primary))]"
                 disabled={!isPremium}
               >
                 <Factory className="h-4 w-4" />
