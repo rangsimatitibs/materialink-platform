@@ -243,6 +243,7 @@ export type Database = {
           data_confidence: string | null
           end_of_life_summary: string | null
           id: string
+          image_url: string | null
           name: string
           production_scale_maturity: string | null
           short_description: string | null
@@ -260,6 +261,7 @@ export type Database = {
           data_confidence?: string | null
           end_of_life_summary?: string | null
           id?: string
+          image_url?: string | null
           name: string
           production_scale_maturity?: string | null
           short_description?: string | null
@@ -277,6 +279,7 @@ export type Database = {
           data_confidence?: string | null
           end_of_life_summary?: string | null
           id?: string
+          image_url?: string | null
           name?: string
           production_scale_maturity?: string | null
           short_description?: string | null
@@ -789,6 +792,41 @@ export type Database = {
           url?: string | null
         }
         Relationships: []
+      }
+      supplier_grade_images: {
+        Row: {
+          caption: string | null
+          created_at: string
+          grade_id: string
+          id: string
+          image_url: string
+          sort_order: number
+        }
+        Insert: {
+          caption?: string | null
+          created_at?: string
+          grade_id: string
+          id?: string
+          image_url: string
+          sort_order?: number
+        }
+        Update: {
+          caption?: string | null
+          created_at?: string
+          grade_id?: string
+          id?: string
+          image_url?: string
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "supplier_grade_images_grade_id_fkey"
+            columns: ["grade_id"]
+            isOneToOne: false
+            referencedRelation: "supplier_material_grades"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       supplier_material_grades: {
         Row: {
