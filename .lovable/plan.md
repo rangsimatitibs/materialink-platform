@@ -1,70 +1,92 @@
+## Problem
+The materials database currently loads every published material into memory and filters client-side with a 2-column card grid. That breaks past a few hundred rows and gives no way to narrow down by category, sustainability, or tags.
+
 ## Goal
-Retheme the material profile output page (`/app/materials/:slug`) so it matches the warm cream + forest green aesthetic already used on the Materials database page, replacing the current orange/hardcoded chips with a coherent, semantic palette. Introduce a small set of colorful category tags so material properties, applications, and regulations are easy to scan at a glance.
+Rebuild `/app/search` as a scalable, filterable, paginated results surface — same warm cream + green aesthetic, but designed for 1,000+ materials.
 
-## Design language (locked to existing site tokens)
-- Background: warm cream `--background` (already `45 30% 96%`).
-- Headings: Playfair Display serif (already global) — apply to material name and section titles.
-- Primary accent: deep forest green `--primary` for main actions and formula chip.
-- Sustainability score: forest green numeric, cream label.
-- Cards: `--card` with hairline `--border`, subtle `--shadow-medium` on the hero card.
-- No hardcoded `bg-orange-*`, `text-white`, or Tailwind color literals anywhere on the page.
-
-## Category tag palette (new semantic tokens in `src/index.css`)
-Add a small set of soft, warm-cream compatible chip tokens (background + foreground pair for each), used across the profile:
+## New page structure
 
 ```text
---tag-material     — forest green pill (identity chip beside the name)
---tag-source       — sage / leaf green (feedstock/tag chips)
---tag-application  — moss / soft olive (application chips)
---tag-regulation   — clay / amber (regulation & certification chips)
---tag-physical     — sky teal (physical properties group)
---tag-mechanical   — terracotta (mechanical properties group)
---tag-safety       — muted red-clay (safety & hazards group)
---tag-sustainability — leaf green (sustainability group)
---tag-ai           — warm ochre (AI Generated source badge)
---tag-local        — deep sage (Local / database source badge)
+┌──────────────────────────────────────────────────────────────┐
+│  Materials database                                          │
+│  General material profiles with typical property…            │
+├──────────────────────────────────────────────────────────────┤
+│  [🔎 Search name, formula, description…]  [Sort ▾]           │
+│                                                              │
+│  Category:  All · Polymers · Metals · Composites · Bio-…    │  ← horizontal chip filter row
+│  Filters:   Confidence ▾   Sustainability ≥ [slider]   Tags ▾│
+│  ── 4 active · Clear all ───────────────────────────────────│
+├──────────────────────────────────────────────────────────────┤
+│  Showing 1–24 of 1,247                                       │
+│                                                              │
+│  ┌────────────────────────────────────────────────────────┐  │
+│  │ Geopolymer concrete       Composite   High   82% 🌿    │  │  ← dense row
+│  │ Alkali-activated binder concrete with no Portland…     │  │
+│  │ #low-carbon · #construction · #binder                  │  │
+│  └────────────────────────────────────────────────────────┘  │
+│  ... more rows ...                                           │
+├──────────────────────────────────────────────────────────────┤
+│  ‹ Prev   1 · 2 · 3 …  52 · Next ›     [24 per page ▾]      │
+└──────────────────────────────────────────────────────────────┘
 ```
 
-Each rendered as a rounded-full pill with `bg-[hsl(var(--tag-x)/0.15)]` and `text-[hsl(var(--tag-x))]`, tuned to sit calmly on the cream canvas.
+Dense list rows scale far better than large cards and can show category + confidence + sustainability score inline as colored chips.
 
-## Page structure changes (`src/pages/app/MaterialProfile.tsx`)
-No structural rewrite — keep the header card + tabs + accordion layout added last turn. Only restyle:
+## Backend query
+Single query per page keyed on filters, using server-side pagination:
 
-1. Hero card
-   - Serif h1 for material name.
-   - "Material" chip → `--tag-material` (forest green pill).
-   - "Also known as" → small caps label + body text.
-   - Formula pill → cream card with forest-green atom icon, subscripts preserved.
-   - Sustainability block (right side) → serif numeric in `--primary`, small caps "Sustainability" label.
-   - Sources chips → leaf icon + `--tag-source` color.
-   - Applications chips → `--tag-application`.
-   - Regulations chips → award icon + `--tag-regulation`.
-   - Toggle button uses `variant="default"` (forest green) when open, `outline` when closed.
-   - "Advanced Data Sheet — Premium" locked button uses muted card style, lock icon, small serif "Premium" tag.
+```ts
+supabase
+  .from("general_materials")
+  .select(
+    "id, name, slug, short_description, chemical_formula, data_confidence, category_id, material_categories(name)",
+    { count: "exact" }
+  )
+  .eq("status", "published")
+  .ilike*(q ? "name" : "" ...)         // OR filter across name/formula/short_description
+  .in("category_id", selectedCategories)   // optional
+  .in("data_confidence", selectedConfidence) // optional
+  .order(sort.column, { ascending: sort.dir === "asc" })
+  .range(page*perPage, page*perPage + perPage - 1);
+```
 
-2. Tabs
-   - Pill tabs restyled to cream + border, active = forest green with cream text.
-   - Suppliers count chip uses `--muted` when non-premium, forest green when active.
+Sustainability filter joins `sustainability_indicators` via a lightweight RPC (`search_materials`) so we can filter on `bio_based_content + recycled_content` combined score without pulling the whole table client-side. For phase 1 we can skip this and hide the sustainability slider until the RPC lands.
 
-3. Material Properties accordion
-   - Each group header carries its category color as a soft rounded icon square + a matching count chip (Description = neutral, Physical = teal, Mechanical = terracotta, Safety = clay-red, Sustainability = leaf-green, Other = muted).
-   - Property cards: cream card, name in muted, value in serif/semibold, source badge (`Local` or `AI Generated`) top-right using `--tag-local` / `--tag-ai`.
-   - Section title "Material Properties" set in Playfair.
+Tag filter uses `general_material_tags` — small dropdown reads distinct tags once, filtering adds a `.in("id", tagMatchedIds)` from a subselect RPC. Also deferred to phase 2 if it complicates the query.
 
-4. Search results (`src/pages/app/Search.tsx`)
-   - Confidence badge (High / Medium / Low) → colored by tier using the same tag tokens (High = leaf green, Medium = clay, Low = muted).
-   - Card hover: forest-green border + subtle shadow to match the reference screenshot.
+### Phase 1 (this iteration)
+- Full-text-ish search across `name`, `chemical_formula`, `short_description` via a single `.or("name.ilike.%q%,chemical_formula.ilike.%q%,short_description.ilike.%q%")`.
+- Category chip filter (multi-select) driven by `material_categories`.
+- Confidence multi-select (`high` / `medium` / `low` / `verified` / `estimated` / `ai_generated`).
+- Sort: name asc/desc, confidence, recently updated.
+- Pagination with prev/next + page numbers, 24 per page default, selectable 12 / 24 / 48.
+- Debounced search input (300 ms), state synced to URL query params (`?q=&cat=&conf=&sort=&page=`) so results are shareable.
+
+### Phase 2 (deferred, not built now)
+- `search_materials` RPC accepting sustainability threshold, tag intersection, and full-text weight — call it from the same page without changing the UI.
+- Optional saved searches and "add to comparison" multi-select.
+
+## UI details (matches existing warm/green system)
+- Search bar: full-width, cream card, forest-green focus ring.
+- Category chips: rounded-full outline, active = filled `--primary`.
+- Filter popovers (Confidence, Sort, Per-page): shadcn `Popover` + `Command` for keyboard-friendly multi-select.
+- Result row: `Link` wrapping a `div` with grid columns — name (serif), category chip, confidence chip (reuses the tag palette added last turn), short description (truncated), tag chips row.
+- Empty state: same warm illustration copy as today, plus a "Clear filters" button.
+- Loading: skeleton rows instead of spinner so layout doesn't jump between pages.
+- Pagination: shadcn `Pagination` component with numeric window (first, last, ±2 around current).
 
 ## Files touched
-- `src/index.css` — add the 10 tag tokens above under `:root` and `.dark`, plus a tiny `.tag-*` utility layer or use inline `bg-[hsl(var(--tag-x)/0.15)]` classes directly in components.
-- `src/pages/app/MaterialProfile.tsx` — swap every hardcoded orange/white class for the new tokens; adjust chip colors per category; ensure serif headings.
-- `src/pages/app/Search.tsx` — restyle result cards and confidence badge to match.
-
-## Out of scope
-- No changes to data, routing, tabs behavior, or suppliers logic.
-- No global font change (Playfair + system stack stay as-is).
-- No dark-mode redesign beyond keeping tokens defined so it still works.
+- `src/pages/app/Search.tsx` — full rewrite of the page body around the new list, filter bar, and pagination.
+- `src/components/app/SearchFilters.tsx` (new) — category chips + confidence popover + sort popover, controlled via props.
+- `src/components/app/MaterialResultRow.tsx` (new) — one dense row, reused for skeletons.
+- No changes to schema, RLS, or routes.
 
 ## Verification
 - Typecheck.
-- Visit `/app/materials/pla-polylactic-acid` (or any seeded material) and `/app/search` in the preview, confirm: cream background, forest-green accents, coherent colorful category chips, no orange leftovers, no `text-white` on light chips.
+- Seed remains ~4 rows, so I'll manually paginate `perPage=2` in the URL to verify pagination and filter round-trips, then confirm URL state persists on reload.
+- Confirm empty state and "Clear filters" reset both category and confidence.
+
+## Out of scope
+- Sustainability slider and tag filter (deferred to phase 2 with the RPC).
+- Adding new indexes — Postgres will handle 1k rows without help; we'll revisit when the table grows.
+- No visual redesign of the material profile page itself (that landed last turn).
