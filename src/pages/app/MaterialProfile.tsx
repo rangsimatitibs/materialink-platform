@@ -397,8 +397,11 @@ function MaterialHeaderCard({
                 {material.name}
               </h1>
               <Badge
-                className="rounded-full border font-medium"
-                style={tagStyle("material", 0.15)}
+                className="rounded-full border-0 font-medium px-3 py-1"
+                style={{
+                  backgroundColor: `hsl(var(--tag-material))`,
+                  color: "hsl(0 0% 100%)",
+                }}
               >
                 Material
               </Badge>
@@ -425,7 +428,10 @@ function MaterialHeaderCard({
               <p className="text-[0.7rem] uppercase tracking-[0.14em] text-muted-foreground">
                 Sustainability
               </p>
-              <p className="font-display text-4xl md:text-5xl text-primary font-semibold">
+              <p
+                className="font-display text-4xl md:text-5xl font-semibold"
+                style={{ color: "hsl(var(--cta-primary))" }}
+              >
                 {sustainabilityScore}%
               </p>
             </div>
