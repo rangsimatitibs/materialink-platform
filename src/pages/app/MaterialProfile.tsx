@@ -394,18 +394,24 @@ function MaterialHeaderCard({
               <h1 className="font-display text-3xl md:text-4xl tracking-tight text-foreground">
                 {material.name}
               </h1>
-              <Badge className="rounded-full bg-orange-500/15 text-orange-600 border-transparent hover:bg-orange-500/20">
+              <Badge
+                className="rounded-full border font-medium"
+                style={tagStyle("material", 0.15)}
+              >
                 Material
               </Badge>
             </div>
             {synonyms.length > 0 && (
               <p className="text-sm text-muted-foreground">
-                <span className="font-medium text-foreground/80">Also known as:</span>{" "}
+                <span className="text-[0.7rem] uppercase tracking-[0.14em] font-medium text-foreground/70">
+                  Also known as
+                </span>
+                <span className="mx-2 text-muted-foreground/60">·</span>
                 {synonyms.join(", ")}
               </p>
             )}
             {material.chemical_formula && (
-              <div className="inline-flex items-center gap-2 border rounded-lg px-3 py-1.5 text-sm">
+              <div className="inline-flex items-center gap-2 border rounded-full px-3 py-1.5 text-sm bg-card">
                 <Atom className="h-4 w-4 text-primary" />
                 <span className="text-muted-foreground">Formula:</span>{" "}
                 <Formula formula={material.chemical_formula} />
@@ -414,7 +420,9 @@ function MaterialHeaderCard({
           </div>
           {sustainabilityScore !== null && (
             <div className="text-right shrink-0">
-              <p className="text-sm text-muted-foreground">Sustainability</p>
+              <p className="text-[0.7rem] uppercase tracking-[0.14em] text-muted-foreground">
+                Sustainability
+              </p>
               <p className="font-display text-4xl md:text-5xl text-primary font-semibold">
                 {sustainabilityScore}%
               </p>
@@ -426,13 +434,16 @@ function MaterialHeaderCard({
           <div className="space-y-4 pt-2">
             {tags.length > 0 && (
               <div>
-                <p className="font-medium text-sm mb-2">Sources:</p>
+                <p className="text-[0.7rem] uppercase tracking-[0.14em] font-medium text-foreground/70 mb-2">
+                  Sources
+                </p>
                 <div className="flex flex-wrap gap-2">
                   {tags.map((t) => (
                     <Badge
                       key={t}
                       variant="outline"
-                      className="rounded-full border-primary/40 text-primary bg-primary/5 gap-1"
+                      className="rounded-full border gap-1"
+                      style={tagStyle("source", 0.12)}
                     >
                       <Leaf className="h-3 w-3" /> {t}
                     </Badge>
@@ -444,13 +455,16 @@ function MaterialHeaderCard({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {applications.length > 0 && (
                 <div>
-                  <p className="font-medium text-sm mb-2">Applications:</p>
+                  <p className="text-[0.7rem] uppercase tracking-[0.14em] font-medium text-foreground/70 mb-2">
+                    Applications
+                  </p>
                   <div className="flex flex-wrap gap-2">
                     {applications.map((a) => (
                       <Badge
                         key={a.id}
-                        variant="secondary"
-                        className="rounded-full bg-primary/10 text-primary hover:bg-primary/15"
+                        variant="outline"
+                        className="rounded-full border"
+                        style={tagStyle("application", 0.14)}
                       >
                         {a.name}
                       </Badge>
@@ -461,15 +475,18 @@ function MaterialHeaderCard({
 
               {(regulations.length > 0 || certifications.length > 0) && (
                 <div>
-                  <p className="font-medium text-sm mb-2">Regulations:</p>
+                  <p className="text-[0.7rem] uppercase tracking-[0.14em] font-medium text-foreground/70 mb-2">
+                    Regulations
+                  </p>
                   <div className="flex flex-wrap gap-2">
                     {[...regulations, ...certifications].map((r) => (
                       <Badge
                         key={r.id}
                         variant="outline"
-                        className="rounded-full gap-1"
+                        className="rounded-full border gap-1"
+                        style={tagStyle("regulation", 0.14)}
                       >
-                        <Award className="h-3 w-3 text-primary" /> {r.name}
+                        <Award className="h-3 w-3" /> {r.name}
                       </Badge>
                     ))}
                   </div>
