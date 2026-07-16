@@ -27,6 +27,8 @@ import {
   ShieldAlert,
   Database,
   Sparkles,
+  ChevronUp,
+  ChevronDown,
 } from "lucide-react";
 import SupplierGradesSection from "@/components/app/SupplierGradesSection";
 import { useAuth } from "@/contexts/AuthContext";
