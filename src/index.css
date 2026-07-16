@@ -84,16 +84,20 @@
     --sidebar-ring: 158 45% 18%;
 
     /* Category tag palette — warm cream compatible */
-    --tag-material: 158 45% 22%;
-    --tag-source: 145 40% 35%;
-    --tag-application: 90 35% 30%;
-    --tag-regulation: 30 55% 40%;
+    --tag-material: 22 85% 58%;
+    --tag-source: 142 55% 42%;
+    --tag-application: 165 55% 38%;
+    --tag-regulation: 165 45% 35%;
     --tag-physical: 195 45% 35%;
     --tag-mechanical: 15 55% 42%;
     --tag-safety: 5 55% 45%;
     --tag-sustainability: 145 45% 32%;
     --tag-ai: 35 65% 40%;
     --tag-local: 158 40% 28%;
+
+    /* Bright emerald CTA (matches reference "Hide Details" button) */
+    --cta-primary: 145 62% 42%;
+    --cta-primary-foreground: 0 0% 100%;
   }
 
   .dark {
@@ -134,16 +138,19 @@
     --sidebar-border: 160 18% 18%;
     --sidebar-ring: 145 40% 55%;
 
-    --tag-material: 145 45% 60%;
-    --tag-source: 145 40% 55%;
-    --tag-application: 90 35% 60%;
-    --tag-regulation: 30 60% 62%;
+    --tag-material: 22 85% 62%;
+    --tag-source: 142 55% 60%;
+    --tag-application: 165 55% 60%;
+    --tag-regulation: 165 45% 60%;
     --tag-physical: 195 55% 62%;
     --tag-mechanical: 15 65% 65%;
     --tag-safety: 5 65% 65%;
     --tag-sustainability: 145 45% 60%;
     --tag-ai: 35 75% 65%;
     --tag-local: 145 40% 60%;
+
+    --cta-primary: 145 55% 48%;
+    --cta-primary-foreground: 0 0% 100%;
   }
 }
 

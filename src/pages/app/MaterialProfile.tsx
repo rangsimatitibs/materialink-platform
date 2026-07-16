@@ -27,6 +27,8 @@ import {
   ShieldAlert,
   Database,
   Sparkles,
+  ChevronUp,
+  ChevronDown,
 } from "lucide-react";
 import SupplierGradesSection from "@/components/app/SupplierGradesSection";
 import { useAuth } from "@/contexts/AuthContext";
@@ -316,13 +318,13 @@ export default function MaterialProfile() {
             <TabsList className="bg-transparent p-0 gap-2 h-auto">
               <TabsTrigger
                 value="properties"
-                className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:border-primary bg-card rounded-full border px-5 py-2"
+                className="data-[state=active]:text-white data-[state=active]:border-transparent bg-card rounded-full border px-5 py-2 data-[state=active]:[background-color:hsl(var(--cta-primary))]"
               >
                 Material Properties
               </TabsTrigger>
               <TabsTrigger
                 value="suppliers"
-                className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground data-[state=active]:border-primary bg-card rounded-full border px-5 py-2 gap-2"
+                className="data-[state=active]:text-white data-[state=active]:border-transparent bg-card rounded-full border px-5 py-2 gap-2 data-[state=active]:[background-color:hsl(var(--cta-primary))]"
                 disabled={!isPremium}
               >
                 <Factory className="h-4 w-4" />
@@ -395,8 +397,11 @@ function MaterialHeaderCard({
                 {material.name}
               </h1>
               <Badge
-                className="rounded-full border font-medium"
-                style={tagStyle("material", 0.15)}
+                className="rounded-full border-0 font-medium px-3 py-1"
+                style={{
+                  backgroundColor: `hsl(var(--tag-material))`,
+                  color: "hsl(0 0% 100%)",
+                }}
               >
                 Material
               </Badge>
@@ -423,7 +428,10 @@ function MaterialHeaderCard({
               <p className="text-[0.7rem] uppercase tracking-[0.14em] text-muted-foreground">
                 Sustainability
               </p>
-              <p className="font-display text-4xl md:text-5xl text-primary font-semibold">
+              <p
+                className="font-display text-4xl md:text-5xl font-semibold"
+                style={{ color: "hsl(var(--cta-primary))" }}
+              >
                 {sustainabilityScore}%
               </p>
             </div>
@@ -498,17 +506,32 @@ function MaterialHeaderCard({
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-2">
           <Button
-            variant={showDetails ? "default" : "outline"}
             onClick={onToggleDetails}
-            className="w-full"
+            className="w-full h-12 rounded-lg text-base font-semibold gap-2 border-0 hover:brightness-95 transition"
+            style={{
+              backgroundColor: "hsl(var(--cta-primary))",
+              color: "hsl(var(--cta-primary-foreground))",
+            }}
           >
+            {showDetails ? (
+              <ChevronUp className="h-5 w-5" />
+            ) : (
+              <ChevronDown className="h-5 w-5" />
+            )}
             {showDetails ? "Hide Details" : "Show Details"}
           </Button>
-          <Button variant="outline" disabled className="w-full gap-2 justify-between">
+          <Button
+            variant="outline"
+            disabled
+            className="w-full h-12 rounded-lg gap-2 justify-between bg-card"
+          >
             <span className="inline-flex items-center gap-2">
               <Lock className="h-4 w-4" /> Advanced Data Sheet
             </span>
-            <Badge variant="secondary" className="rounded-full">
+            <Badge
+              variant="secondary"
+              className="rounded-full text-[0.7rem] font-medium"
+            >
               {isPremium ? "Coming soon" : "Premium"}
             </Badge>
           </Button>
