@@ -8,6 +8,29 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Loader2, ArrowRight } from "lucide-react";
 
+function confidenceStyle(level: string): React.CSSProperties {
+  const l = level.toLowerCase();
+  if (l.startsWith("high") || l === "verified") {
+    return {
+      backgroundColor: "hsl(var(--tag-sustainability) / 0.15)",
+      color: "hsl(var(--tag-sustainability))",
+      borderColor: "hsl(var(--tag-sustainability) / 0.25)",
+    };
+  }
+  if (l.startsWith("medium") || l === "estimated") {
+    return {
+      backgroundColor: "hsl(var(--tag-regulation) / 0.15)",
+      color: "hsl(var(--tag-regulation))",
+      borderColor: "hsl(var(--tag-regulation) / 0.25)",
+    };
+  }
+  return {
+    backgroundColor: "hsl(var(--muted))",
+    color: "hsl(var(--muted-foreground))",
+    borderColor: "transparent",
+  };
+}
+
 type Material = {
   id: string;
   name: string;
@@ -80,10 +103,10 @@ export default function Search() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {filtered.map((m) => (
                 <Link key={m.id} to={`/app/materials/${m.slug}`}>
-                  <Card className="h-full hover:border-primary transition-colors">
+                  <Card className="h-full hover:border-primary hover:shadow-[var(--shadow-medium)] transition-all">
                     <CardHeader className="pb-2">
                       <div className="flex items-start justify-between gap-3">
-                        <CardTitle className="text-xl">{m.name}</CardTitle>
+                        <CardTitle className="font-display text-2xl">{m.name}</CardTitle>
                         <ArrowRight className="h-4 w-4 text-muted-foreground shrink-0 mt-1" />
                       </div>
                       {m.chemical_formula && (
@@ -99,7 +122,10 @@ export default function Search() {
                         </p>
                       )}
                       {m.data_confidence && (
-                        <Badge variant="secondary" className="capitalize">
+                        <Badge
+                          className="capitalize rounded-full border font-medium"
+                          style={confidenceStyle(m.data_confidence)}
+                        >
                           {m.data_confidence.replace("_", " ")}
                         </Badge>
                       )}
